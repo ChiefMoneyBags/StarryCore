@@ -1,0 +1,34 @@
+themes:
+  standard:
+    sections:
+      intro_a:
+        - "1,5~2"
+        - "1,5~2"
+        - "1,5,8~4"
+        - "2,6,9~4"
+      intro_b:
+        - "0~4"
+        - "1~4"
+        - "10~8"
+    variants:
+      base:
+        general:
+          tempo: 2
+        instruments:
+          BLOCK_NOTE_BLOCK_FLUTE: 
+            - intro_a
+            - intro_a
+            - intro_b
+            - intro_b
+      in_water:
+        general: 
+          tempo: 4
+        instruments:
+          BLOCK_NOTE_BLOCK_XYLOPHONE:
+            - intro_a
+            - intro_a
+            - intro_b
+            - intro_b
+
+  cave:
+

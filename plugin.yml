@@ -1,0 +1,5 @@
+name: MoneyCore
+main: me.chiefbeef.core.Core
+version: 1.0
+author: Chief
+api-version: 1.13
