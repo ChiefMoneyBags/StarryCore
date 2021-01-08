@@ -1,4 +1,4 @@
 # StarryCore
 My core plugin,
-This project is currntly a hot mess and contains lots of old garbage as well as broken stuff.
+This project is currently a hot mess and contains lots of old garbage as well as broken stuff.
 It is currently subject to heavy reworking and may change rapidly.
