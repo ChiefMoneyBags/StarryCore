@@ -9,8 +9,9 @@ import me.chiefbeef.core.gui.abstraction.Page;
 import me.chiefbeef.core.gui.abstraction.StaticPage;
 import me.chiefbeef.core.gui.cookies.SelectedItem;
 import me.chiefbeef.core.gui.transition.assets.GuiTransitionAssets;
-import me.chiefbeef.core.gui.transition.assets.GuiTransitionRegistry;
+import me.chiefbeef.core.utility.assets.AssetBuildPack;
 import me.chiefbeef.core.utility.assets.AssetHolder;
+import me.chiefbeef.core.utility.assets.AssetRegistry;
 import me.chiefbeef.core.utility.gui.Pages;
 
 public abstract class GuiTransition extends CoreGuiHandler implements AssetHolder<GuiTransition>, Runnable {
@@ -20,9 +21,9 @@ public abstract class GuiTransition extends CoreGuiHandler implements AssetHolde
 	private int size, frame, taskId;
 	private boolean selectedItem, complete;
 	
-	private static GuiTransitionRegistry registry = new GuiTransitionRegistry();
+	private static AssetRegistry<GuiTransition> registry = new AssetRegistry<>();
 	
-	public static GuiTransitionRegistry getRegistry() {
+	public static AssetRegistry<GuiTransition> getRegistry() {
 		return registry;
 	}
 	
@@ -46,6 +47,11 @@ public abstract class GuiTransition extends CoreGuiHandler implements AssetHolde
 		this.size = to.getInventory().getSize();
 		this.selectedItem = session.getCookies().hasCookie(SelectedItem.class);
 		return this;
+	}
+	
+	@Override
+	public GuiTransition build(AssetBuildPack pack) {
+		return null;
 	}
 
 	public final void start() {

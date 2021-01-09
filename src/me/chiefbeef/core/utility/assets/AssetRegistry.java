@@ -1,13 +1,16 @@
 package me.chiefbeef.core.utility.assets;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.Plugin;
 
+import me.chiefbeef.core.customitem.CustomItem;
 import me.chiefbeef.core.utility.Console;
 
 public class AssetRegistry<T> {
@@ -86,8 +89,8 @@ public class AssetRegistry<T> {
 	 * @param type
 	 * @return
 	 */
-	// I gave up trying to get rid of this unchecked cast the generics are confusing me rn.
-	// I understand the problem i just dont know how to fix it yet.
+	// TODO I know for a fact this type is an AssetHolder<T> otherwise it couldnt be registered, i just cannot
+	// figure out how to explicitly declare it as such without casting, i haven't learned enough about generics yet, i'll come back to it later.
 	@SuppressWarnings("unchecked")
 	public TypeAssets<T> loadAssets(Plugin plugin, Class<? extends T> type) {
 		if (!testClass(type)) {
@@ -113,10 +116,18 @@ public class AssetRegistry<T> {
 	 * To get the {@link TypeAssets} you must invoke {@link AssetRegistry#loadAssets(Plugin, Class)}
 	 * @param assets The assets of the {@link Type} to register.
 	 */
+	// TODO I know for a fact this type is an AssetHolder<T> otherwise it couldnt be registered, i just cannot
+	// figure out how to explicitly declare it as such without casting, i haven't learned enough about generics yet, i'll come back to it later.
+	@SuppressWarnings("unchecked")
 	public void register(TypeAssets<T> assets) {
 		Class<? extends T> type = assets.getType();
 		Console.debug("AssetManager<" + this.getClass().toString() + "> Registering: " + type.toString());
 		assetMap.put(type, assets);
+		try {
+			((AssetHolder<T>) assets.newInstance()).createConfig();
+		} catch (IOException | InvalidConfigurationException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**

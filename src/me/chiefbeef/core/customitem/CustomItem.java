@@ -33,6 +33,7 @@ import me.chiefbeef.core.utility.persistence.gui.PersistentSlotHolder;
 
 public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> {
 	
+	
 	/**
 	 * The Singleton object responsible for managing all the {@link CustomItem} types and their {@link TypeAssets}
 	 * that are registered in this API. 

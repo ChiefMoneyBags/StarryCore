@@ -2,6 +2,8 @@ package me.chiefbeef.core.gui.transition.swipe;
 
 import java.util.Iterator;
 
+import me.chiefbeef.core.gui.transition.GuiTransition;
+import me.chiefbeef.core.utility.assets.AssetBuildPack;
 import me.chiefbeef.core.utility.gui.Pages;
 
 public class TransitionSwipeRight extends SwipeTransition {

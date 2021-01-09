@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import me.chiefbeef.core.customitem.CustomItem;
 import me.chiefbeef.core.utility.assets.AssetBuildPack;
 
-public class CustomItemBuildPack extends AssetBuildPack<CustomItem> {
+public class CustomItemBuildPack implements AssetBuildPack {
 
 	private ItemStack item;
 	

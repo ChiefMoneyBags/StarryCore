@@ -15,12 +15,6 @@ import me.chiefbeef.core.utility.Console;
 import me.chiefbeef.core.utility.files.Files;
 
 /**
- * This all seems overly complicated but in reality it is quite simple and i feel it makes the API's
- * in StarryCore more versatile and easy to use for other developers. This AssetHolder API
- * makes it much faster to implement new features and removes alot of boilerplater code further down
- * the inheritance chain. Also i dont forsee anyone ever needing to work with this libarary directly 
- * it is more of an internal use thing and disapears the further down you go.
- * 
  * An {@link AssetHolder} is a generic type that holds some form of {@link TypeAssets} belonging to
  * the {@link Type}, not to any individual instance.
  * 
@@ -74,15 +68,13 @@ import me.chiefbeef.core.utility.files.Files;
 public interface AssetHolder<T> {
 	
 	
-	public default TypeAssets<T> initialRegistration(Plugin plugin) throws IOException, InvalidConfigurationException {
-		TypeAssets<T> assets = createAssets();
-		assets.setParentPlugin(plugin);
-		
+	public default void createConfig() throws IOException, InvalidConfigurationException {
 		if (hasConfig()) {
-			Console.debug("--<[ Initializing AssetHolder<> files...");
+			TypeAssets<T> assets = getAssets();
+			Console.debug("--<[ Initializing AssetHolder<" + getClass().getName() + "> files...");
 			File customConfigf = new File(getConfigDirectory(), getConfigName() + ".yml");
 			if (!customConfigf.exists()) {
-				Console.info("Config for AssetHolder<" + getClass().toString() + "> does not exist, creating one...");
+				Console.info("Config for AssetHolder<" + getClass().getName() + "> does not exist, creating one...");
 				customConfigf.getParentFile().mkdirs();
 				Files.createConfig(getParentPlugin().getResource(getEmbeddedConfigName() + ".yml"), customConfigf);
 			}
@@ -92,8 +84,6 @@ public interface AssetHolder<T> {
 			assets.setYamlFile(customConfigf);
 			assets.setYamlConfiguration(customConfig);
 		}
-		
-		return assets;
 	}
 	
 	

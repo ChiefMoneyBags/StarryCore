@@ -22,6 +22,8 @@ import me.chiefbeef.core.utility.Console;
  * on the server. If the user closes their gui the {@link GuiSession} will persist however
  * it will lay dormant until another gui {@link Page} is opened. Once the {@link UserCore} logs out the {@link GuiSession}
  * will be lost, and a new one created on join event.
+ * 
+ * Think of it like a web browser and the gui's are web pages.
  * @author Kevin
  *
  */
