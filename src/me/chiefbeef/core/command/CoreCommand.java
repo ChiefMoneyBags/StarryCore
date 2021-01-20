@@ -53,10 +53,6 @@ public abstract class CoreCommand implements AssetHolder<CoreCommand> {
 		return false;
 	}
 
-	@Override
-	public CoreCommand build(CoreCommandBuildPack pack) {
-		return this;
-	}
 
 	@Override
 	public String getLabel() {

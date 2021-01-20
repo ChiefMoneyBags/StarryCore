@@ -9,7 +9,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import me.chiefbeef.core.customitem.CustomItem;
-import me.chiefbeef.core.customitem.CustomItem.TrackerType;
 import me.chiefbeef.core.customitem.tracking.InventoryItemTracker;
 import me.chiefbeef.core.customitem.tracking.ItemTracker;
 import me.chiefbeef.core.gui.GuiSession;
@@ -98,7 +97,7 @@ public abstract class CoreGuiHandler {
 	 */
 	public void setSlot(int slot, CustomItem custom) {
 		inv.setItem(slot, custom.getItem());
-		InventoryItemTracker iit = (InventoryItemTracker) custom.getTracker(TrackerType.INVENTORY);
+		InventoryItemTracker iit = (InventoryItemTracker) custom.getTracker(ItemTracker.INVENTORY);
 		if (!iit.isTracking(inv, slot)) {
 			iit.addSlot(inv, slot, true);
 		}
