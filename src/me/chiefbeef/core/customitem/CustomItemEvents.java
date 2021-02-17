@@ -41,10 +41,10 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import me.chiefbeef.core.StarryCore;
-import me.chiefbeef.core.customitem.CustomItem.TrackerType;
 import me.chiefbeef.core.customitem.tracking.CursorItemTracker;
 import me.chiefbeef.core.customitem.tracking.EntityItemTracker;
 import me.chiefbeef.core.customitem.tracking.InventoryItemTracker;
+import me.chiefbeef.core.customitem.tracking.ItemTracker;
 import me.chiefbeef.core.event.channel.PacketPlayInEvent;
 import me.chiefbeef.core.user.UserCore;
 import me.chiefbeef.core.utility.Console;
@@ -59,13 +59,18 @@ import net.minecraft.server.v1_15_R1.PacketPlayInUseEntity;
 // TODO
 // Item entities continue to be tracked after despawning. There is no despawn
 // event, what to do.
+
 // Player puts custom items in crafting then closes inv, items are no longer
 // tracked when they are auto placed back in inv.
+
 // shift click into other inv not tracked.
+
 // Inventory and cursor trackers create ghost blocks when updating really fast,
 // no successful dupes yet.
+
 // off hand and armor slots need hard coded slot numbers for drag event
-// call destroy on entity death.
+
+// call destroy on entity death. TODO??
 /**
  * Listener class responsible for passing interactions to CustomItems and
  * tracking where CustomItems are.
@@ -102,7 +107,7 @@ public class CustomItemEvents implements Listener {
 		for (ItemStack item : inv.getContents()) {
 			if (CustomItem.isCustom(item)) {
 				CustomItem custom = CustomItem.fromItemStack(item);
-				InventoryItemTracker iit = (InventoryItemTracker) custom.getTracker(TrackerType.INVENTORY);
+				InventoryItemTracker iit = custom.getTracker(InventoryItemTracker.class);
 				iit.addSlot(inv, slot, true);
 			}
 			slot++;
@@ -113,7 +118,7 @@ public class CustomItemEvents implements Listener {
 		for (ItemStack item : inv.getContents()) {
 			if (CustomItem.isCustom(item)) {
 				CustomItem custom = CustomItem.fromItemStack(item);
-				InventoryItemTracker iit = (InventoryItemTracker) custom.getTracker(TrackerType.INVENTORY);
+				InventoryItemTracker iit = custom.getTracker(InventoryItemTracker.class);
 				iit.removeInventory(inv, true);
 			}
 		}
@@ -135,7 +140,7 @@ public class CustomItemEvents implements Listener {
 					continue;
 				}
 				CustomItem custom = CustomItem.fromItemStack(it);
-				EntityItemTracker eit = (EntityItemTracker) custom.getTracker(TrackerType.ENTITY);
+				EntityItemTracker eit = custom.getTracker(EntityItemTracker.class);
 				eit.addEntity(item);
 			}
 		}
@@ -161,7 +166,7 @@ public class CustomItemEvents implements Listener {
 		final ItemStack it = item.getItemStack();
 		if (CustomItem.isCustom(it)) {
 			CustomItem custom = CustomItem.fromItemStack(it);
-			EntityItemTracker eit = (EntityItemTracker) custom.getTracker(TrackerType.ENTITY);
+			EntityItemTracker eit = custom.getTracker(EntityItemTracker.class);
 			eit.addEntity(item);
 		}
 	}
@@ -176,7 +181,7 @@ public class CustomItemEvents implements Listener {
 		final ItemStack it = item.getItemStack();
 		if (CustomItem.isCustom(it)) {
 			CustomItem custom = CustomItem.fromItemStack(it);
-			EntityItemTracker eit = (EntityItemTracker) custom.getTracker(TrackerType.ENTITY);
+			EntityItemTracker eit = custom.getTracker(EntityItemTracker.class);
 			if (item.isDead() || !item.isValid()) {
 				eit.removeEntity(item);
 			} else {
@@ -191,8 +196,8 @@ public class CustomItemEvents implements Listener {
 		final ItemStack it = item.getItemStack();
 		if (CustomItem.isCustom(it)) {
 			CustomItem custom = CustomItem.fromItemStack(it);
-			InventoryItemTracker iit = (InventoryItemTracker) custom.getTracker(TrackerType.INVENTORY);
-			EntityItemTracker eit = (EntityItemTracker) custom.getTracker(TrackerType.ENTITY);
+			InventoryItemTracker iit = custom.getTracker(InventoryItemTracker.class);
+			EntityItemTracker eit = custom.getTracker(EntityItemTracker.class);
 			eit.addEntity(item);
 			iit.removeInventory(e.getPlayer().getInventory(), true);
 		}
@@ -214,10 +219,10 @@ public class CustomItemEvents implements Listener {
 			if (e.getEntity() instanceof Player) {
 				Inventory inv = ((Player) e.getEntity()).getInventory();
 				int slot = inv.firstEmpty();
-				InventoryItemTracker iit = (InventoryItemTracker) custom.getTracker(TrackerType.INVENTORY);
+				InventoryItemTracker iit = custom.getTracker(InventoryItemTracker.class);
 				iit.addSlot(inv, slot, true);
 			}
-			EntityItemTracker eit = (EntityItemTracker) custom.getTracker(TrackerType.ENTITY);
+			EntityItemTracker eit = custom.getTracker(EntityItemTracker.class);
 			eit.removeEntity(item);
 		}
 	}
@@ -260,7 +265,7 @@ public class CustomItemEvents implements Listener {
 			e.setCancelled(true);
 			return;
 		}
-		InventoryItemTracker iit = (InventoryItemTracker) custom.getTracker(TrackerType.INVENTORY);
+		InventoryItemTracker iit = custom.getTracker(InventoryItemTracker.class);
 		for (int rawSlot : placed) {
 			Inventory inv = view.getInventory(rawSlot);
 			// actual slot number for the inventory clicked.
@@ -280,7 +285,7 @@ public class CustomItemEvents implements Listener {
 		}
 
 		if (e.getCursor() == null || e.getCursor().getType() == Material.AIR) {
-			CursorItemTracker cit = (CursorItemTracker) custom.getTracker(TrackerType.CURSOR);
+			CursorItemTracker cit = custom.getTracker(CursorItemTracker.class);
 			cit.removeCursor((Player) e.getWhoClicked());
 		}
 	}
@@ -310,8 +315,8 @@ public class CustomItemEvents implements Listener {
 		CursorItemTracker cit;
 		// Did another plugin forcefully set the inventory slot?
 		if (placed != null) {
-			iit = (InventoryItemTracker) placed.getTracker(TrackerType.INVENTORY);
-			cit = (CursorItemTracker) placed.getTracker(TrackerType.CURSOR);
+			iit = (InventoryItemTracker) placed.getTracker(InventoryItemTracker.class);
+			cit = (CursorItemTracker) placed.getTracker(CursorItemTracker.class);
 			if (!iit.isTracking(clicked, slot) && clicked.getItem(slot).equals(placed.getItem())) {
 				iit.addSlot(clicked, slot, true);
 			}
@@ -321,8 +326,8 @@ public class CustomItemEvents implements Listener {
 		}
 		// Did another plugin forcefully set the player cursor?
 		if (got != null) {
-			iit = (InventoryItemTracker) got.getTracker(TrackerType.INVENTORY);
-			cit = (CursorItemTracker) got.getTracker(TrackerType.CURSOR);
+			iit = (InventoryItemTracker) got.getTracker(InventoryItemTracker.class);
+			cit = (CursorItemTracker) got.getTracker(CursorItemTracker.class);
 			if (iit.isTracking(clicked, slot) && !clicked.getItem(slot).equals(placed.getItem())) {
 				iit.removeSlot(clicked, slot, true);
 			}
@@ -371,24 +376,24 @@ public class CustomItemEvents implements Listener {
 			CursorItemTracker cit;
 			EntityItemTracker eit;
 			if (got != null) {
-				iit = (InventoryItemTracker) got.getTracker(TrackerType.INVENTORY);
-				cit = (CursorItemTracker) got.getTracker(TrackerType.CURSOR);
+				iit = got.getTracker(InventoryItemTracker.class);
+				cit = got.getTracker(CursorItemTracker.class);
 				cit.addCursor(p);
 				iit.removeSlot(clicked, e.getSlot(), true);
 			}
 			if (placed != null) {
 				int slot = e.getSlot();
-				cit = (CursorItemTracker) placed.getTracker(TrackerType.CURSOR);
+				cit = placed.getTracker(CursorItemTracker.class);
 
 				// if clicked is not a border of the inv
 				if (clicked != null && slot > -1) {
-					iit = (InventoryItemTracker) placed.getTracker(TrackerType.INVENTORY);
+					iit = placed.getTracker(InventoryItemTracker.class);
 					iit.addSlot(clicked, e.getSlot(), true);
 					cit.removeCursor(p);
 
 					// If clicked is outside inventory bounds
 				} else if (slot == -999) {
-					eit = (EntityItemTracker) placed.getTracker(TrackerType.ENTITY);
+					eit = placed.getTracker(EntityItemTracker.class);
 					eit.startWatcher();
 					cit.removeCursor(p);
 				}
@@ -463,7 +468,7 @@ public class CustomItemEvents implements Listener {
 				continue;
 			}
 			CustomItem custom = CustomItem.fromItemStack(it);
-			EntityItemTracker eit = (EntityItemTracker) custom.getTracker(TrackerType.ENTITY);
+			EntityItemTracker eit = custom.getTracker(EntityItemTracker.class);
 			eit.addEntity(item);
 		}
 	}
@@ -481,7 +486,7 @@ public class CustomItemEvents implements Listener {
 				continue;
 			}
 			CustomItem custom = CustomItem.fromItemStack(it);
-			EntityItemTracker eit = (EntityItemTracker) custom.getTracker(TrackerType.ENTITY);
+			EntityItemTracker eit = custom.getTracker(EntityItemTracker.class);
 			eit.removeEntity(item);
 		}
 	}

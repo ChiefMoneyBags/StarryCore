@@ -3,6 +3,7 @@ package me.chiefbeef.core.utility.assets;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,6 +17,7 @@ import me.chiefbeef.core.utility.Console;
 public class AssetRegistry<T> {
 	
 	private final Map<Class<? extends T>, TypeAssets<T>> assetMap = new ConcurrentHashMap<>();
+	
 	
 	/**
 	 * See if a type is registered.
@@ -58,7 +60,7 @@ public class AssetRegistry<T> {
 	
 	
 	/**
-	 * Test a class to see if it is built to the specifications of the api it is being registered in.
+	 * Test a class to see if it is built to the specifications of the {@link AssetHolder} API.
 	 * @return false if the class failed the test cases.
 	 */
 	public boolean testClass(Class<? extends T> type) {
@@ -109,10 +111,13 @@ public class AssetRegistry<T> {
 	/**
 	 * Register a {@link AssetHolder} type using its {@link TypeAssets}.
 	 * This option allows you to register your {@link AssetHolder} types in
-	 * a dynamically using information held within the assets if they may
-	 * depend on eachother. This was a problem that arose in my plugin 
-	 * ExoSuit with technology modules which is part of the reason for this API. 
-	 * 
+	 * a dynamic order using information held within the assets if they may depend on eachother.
+	 * <p>
+	 * This was a problem that arose in my plugin ExoSuit with technology modules and their upgrade modules.
+	 * Before the assets were obtained i couldnt know which types were dependent on
+	 * eachother without explicity stating it, which is not at all dynamic. i prefer the types themselves to
+	 * declare their dependencies while being loaded.
+	 * </p>
 	 * To get the {@link TypeAssets} you must invoke {@link AssetRegistry#loadAssets(Plugin, Class)}
 	 * @param assets The assets of the {@link Type} to register.
 	 */
@@ -123,10 +128,17 @@ public class AssetRegistry<T> {
 		Class<? extends T> type = assets.getType();
 		Console.debug("AssetManager<" + this.getClass().toString() + "> Registering: " + type.toString());
 		assetMap.put(type, assets);
+		
 		try {
 			((AssetHolder<T>) assets.newInstance()).createConfig();
 		} catch (IOException | InvalidConfigurationException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void registerAll(Plugin plugin, List<Class<? extends T>> types) {
+		for (Class<? extends T> type : types) {
+			register(plugin, type);
 		}
 	}
 	

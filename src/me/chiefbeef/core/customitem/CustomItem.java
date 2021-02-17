@@ -1,5 +1,6 @@
 package me.chiefbeef.core.customitem;
 
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,28 @@ import me.chiefbeef.core.utility.persistence.DataHolder;
 import me.chiefbeef.core.utility.persistence.DataPack;
 import me.chiefbeef.core.utility.persistence.gui.PersistentSlotHolder;
 
+
+/**
+ * A {@link CustomItem} is an object that is paired with an {@link ItemStack} in game.
+ * 
+ * While an {@link ItemStack} representing a {@link CustomItem} is loaded / seen by the item trackers
+ * it's corresponding CusotmItem object will be loaded into memory and able to execute code.
+ * These objects will be held in a cache for easy lookup.
+ * 
+ * The API will automatically construct these objects when the ItemStack is loaded onto the server
+ * as long as the classes are registered first in {@link CustomItem#getRegistry()}
+ * 
+ * The {@link Types} extending {@link CustomItem} have access to a range of handy mechanics
+ * that allow them to easily implement new features to the server regarding the {@link ItemStack}
+ * and player interactions with them.
+ * 
+ * The API contains a few static methods that can be used to manage CustomItems.
+ *  
+ * @author Kevin
+ *
+ */
+//TODO support for "CustomBlock" objects. The physical placed representation of a CustomItem
+// that pairs the custom item object with a block in the world.
 public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> {
 	
 	
@@ -53,7 +76,8 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	private static final Map<UUID, CustomItem> itemCache = new ConcurrentHashMap<>();
 	
 	/**
-	 * plz no break
+	 * plz no break, this map is accessable is for iteration purposes only,
+	 * removing items from the cache manually is unsafe.
 	 * @return The map you shouldn't break.
 	 */
 	public static Map<UUID, CustomItem> getCache() {
@@ -61,8 +85,9 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	}
 	
 	/**
+	 * Get whether this ItemStack represents a {@link CustomItem}.
 	 * @param item the {@link ItemStack} to check
-	 * @return true if the {@link ItemStack} is a {@link CustomItem}
+	 * @return true if the {@link ItemStack} represents a {@link CustomItem}
 	 */
 	public static boolean isCustom(final ItemStack item) {
 		if (item == null || !item.hasItemMeta()) {
@@ -74,17 +99,22 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	}
 
 	/** 
+	 * Get a {@link CustomItem} instance from its {@link UUID}.
+	 * If the {@link CustomItem} is not currently loaded null will be returned
+	 * as we require the actual {@link ItemStack} representing the {@link CustomItem}
+	 * to load its data.
 	 * @param id The {@link UUID} of the {@link CustomItem}.
-	 * @return The {@link CustomItem} instance in the cache that owns this {@link UUID} or null if there isnt one. 
+	 * @return The {@link CustomItem} instance in the cache that owns the {@link UUID} or null if there isnt one. 
 	 */
 	public static CustomItem fromId(final UUID id) {
 		return itemCache.getOrDefault(id, null);
 	}
 
 	/**
-	 * 
-	 * @param item
-	 * @return
+	 * Get the {@link CustomItem} instance that the ItemStack represents.
+	 * If it is not currently loaded one will be constructed.
+	 * @param item The {@link ItemStack} that represents the {@link CustomItem}.
+	 * @return The {@link CustomItem} instance.
 	 */
 	public static CustomItem fromItemStack(final ItemStack item) {
 		if (!isCustom(item)) {
@@ -95,14 +125,27 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 		return custom.build(new CustomItemBuildPack(item));
 	}
 
+	/**
+	 * Get the {@link String} label of the {@link CustomItem} the {@link ItemStack} represents.
+	 * @param item The ItemStgack that represents the {@link CustomItem}
+	 * @return The label of the {@link CustomItem} or null if the {@link ItemStack} does not represent a {@link CustomItem}.
+	 */
 	public static String getLabel(final ItemStack item) {
 		return isCustom(item) ? Meta.get(item, "customItemLabel") : null;
 	}
 	
+	/**
+	 * Get the {@link UUID} of the {@link CustomItem} the {@link ItemStack} represents.
+	 * @param item The ItemStgack that represents the {@link CustomItem}
+	 * @return The label of the {@link CustomItem} or null if this {@link ItemStack} does not represent a {@link CustomItem}.
+	 */
 	public static UUID getUUID(final ItemStack item) {
 		return isCustom(item) ? UUID.fromString(Meta.get(item, "customItemId")) : null;
 	}
 
+	/**
+	 * Invoked when the API is shutting down.
+	 */
 	public static void onApiShutdown() {
 		for (CustomItem custom : itemCache.values()) {
 			custom.onShutdown();
@@ -130,11 +173,7 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 * awareness of all (loaded) instances of this CustomItems physical
 	 * representation. Unloaded instances are not currently tracked.
 	 */
-	private Map<TrackerType, ItemTracker> trackers = new HashMap<>();
-
-	public static enum TrackerType {
-		INVENTORY, ENTITY, CURSOR;
-	}
+	private Map<Class<? extends ItemTracker>, ItemTracker> trackers = new HashMap<>();
 
 	@Override
 	public CustomItemAssets createAssets() {
@@ -213,9 +252,9 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 * Load the trackers that store information about the custom items wherabouts.
 	 */
 	private void loadTrackers() {
-		trackers.put(TrackerType.INVENTORY, new InventoryItemTracker(this));
-		trackers.put(TrackerType.ENTITY, new EntityItemTracker(this));
-		trackers.put(TrackerType.CURSOR, new CursorItemTracker(this));
+		trackers.put(InventoryItemTracker.class, new InventoryItemTracker(this));
+		trackers.put(EntityItemTracker.class, new EntityItemTracker(this));
+		trackers.put(CursorItemTracker.class, new CursorItemTracker(this));
 	}
 
 	/**
@@ -264,8 +303,12 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 * @param type The type of tracker
 	 * @return The tracker
 	 */
-	public ItemTracker getTracker(TrackerType type) {
-		return trackers.get(type);
+	public <T extends ItemTracker> T getTracker(Class<T> type) {
+		Object obj = trackers.get(type);
+		if (!type.isInstance(obj)) {
+			return null;
+		}
+		return type.cast(obj);
 	}
 
 	/**

@@ -18,9 +18,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import me.chiefbeef.core.customitem.CustomItem;
-import me.chiefbeef.core.customitem.CustomItem.TrackerType;
 import me.chiefbeef.core.customitem.tracking.CursorItemTracker;
 import me.chiefbeef.core.customitem.tracking.InventoryItemTracker;
+import me.chiefbeef.core.customitem.tracking.ItemTracker;
 import me.chiefbeef.core.gui.CustomLayout;
 import me.chiefbeef.core.gui.GuiSession;
 import me.chiefbeef.core.gui.GuiTheme;
@@ -32,6 +32,11 @@ import me.chiefbeef.core.utility.Console;
 import me.chiefbeef.core.utility.gui.Pages;
 import me.chiefbeef.core.utility.persistence.gui.PersistentSlotHolder;
 
+/**
+ * {@link Page} is an object that represents an inventory that will be used as a gui page within a {@link GuiSession} 
+ * @author Kevin
+ *
+ */
 public abstract class Page extends CoreGuiHandler {
 	
 	//Buttons in the gui mapped by slot number
@@ -116,9 +121,9 @@ public abstract class Page extends CoreGuiHandler {
 			if (CustomItem.isCustom(current)) {
 				CustomItem custom = CustomItem.fromItemStack(current);
 				Console.debug("--| Current item is custom. Removing inventory tracker and adding to cursor", "--| Current: " + custom.getLabel());
-				CursorItemTracker cit = (CursorItemTracker) custom.getTracker(TrackerType.CURSOR);
+				CursorItemTracker cit = custom.getTracker(CursorItemTracker.class);
 				cit.addCursor(session.getUser().getPlayer());
-				InventoryItemTracker iit = (InventoryItemTracker) custom.getTracker(TrackerType.INVENTORY);
+				InventoryItemTracker iit = custom.getTracker(InventoryItemTracker.class);
 				iit.removeSlot(clicked, slot, true);
 			}
 			
@@ -139,7 +144,7 @@ public abstract class Page extends CoreGuiHandler {
 	 * @param button
 	 */
 	public void updateButton(GuiButton button) {
-		buttons.entrySet().stream().filter(entry -> entry.getValue().equals(buttons)).forEach(entry -> setSlot(entry.getKey(), entry.getValue().getItem()));
+		buttons.entrySet().stream().filter(entry -> entry.getValue().equals(button)).forEach(entry -> setSlot(entry.getKey(), entry.getValue().getItem()));
 	}
 	
 	/**

@@ -1,9 +1,11 @@
 package me.chiefbeef.core.user;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import me.chiefbeef.core.user.assets.UserExtensionAssets;
 import me.chiefbeef.core.user.assets.UserExtensionRegistry;
+import me.chiefbeef.core.utility.assets.AssetBuildPack;
 import me.chiefbeef.core.utility.assets.AssetHolder;
 import me.chiefbeef.core.utility.assets.TypeAssets;
 
@@ -28,8 +30,32 @@ public abstract class UserExtension implements AssetHolder<UserExtension> {
 	 * Get the {@link UserCore} for this extension.
 	 * @return The {@link UserCore} managing this {@link UserExtension}
 	 */
-	public UserCore getUser() {
+	public UserCore getUserCore() {
 		return user;
+	}
+	
+	/**
+	 * lazy method
+	 * @return the player
+	 */
+	public Player getPlayer() {
+		return getUserCore().getPlayer();
+	}
+	
+	/**
+	 * lazy method.
+	 * @return The location of the player.
+	 */
+	public Location getLocation() {
+		return getUserCore().getLocation();
+	}
+	
+	/**
+	 * UserExtension does not require an {@link AssetBuildPack}
+	 */
+	@Override
+	public UserExtension build(AssetBuildPack pack) {
+		throw new UnsupportedOperationException();
 	}
 	
 	/**
