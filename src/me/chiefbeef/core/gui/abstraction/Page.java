@@ -121,9 +121,9 @@ public abstract class Page extends CoreGuiHandler {
 			if (CustomItem.isCustom(current)) {
 				CustomItem custom = CustomItem.fromItemStack(current);
 				Console.debug("--| Current item is custom. Removing inventory tracker and adding to cursor", "--| Current: " + custom.getLabel());
-				CursorItemTracker cit = (CursorItemTracker) custom.getTracker(ItemTracker.CURSOR);
+				CursorItemTracker cit = custom.getTracker(CursorItemTracker.class);
 				cit.addCursor(session.getUser().getPlayer());
-				InventoryItemTracker iit = (InventoryItemTracker) custom.getTracker(ItemTracker.INVENTORY);
+				InventoryItemTracker iit = custom.getTracker(InventoryItemTracker.class);
 				iit.removeSlot(clicked, slot, true);
 			}
 			
@@ -144,7 +144,7 @@ public abstract class Page extends CoreGuiHandler {
 	 * @param button
 	 */
 	public void updateButton(GuiButton button) {
-		buttons.entrySet().stream().filter(entry -> entry.getValue().equals(buttons)).forEach(entry -> setSlot(entry.getKey(), entry.getValue().getItem()));
+		buttons.entrySet().stream().filter(entry -> entry.getValue().equals(button)).forEach(entry -> setSlot(entry.getKey(), entry.getValue().getItem()));
 	}
 	
 	/**

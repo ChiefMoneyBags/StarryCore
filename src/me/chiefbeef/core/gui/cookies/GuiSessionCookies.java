@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import me.chiefbeef.core.customitem.tracking.ItemTracker;
 import me.chiefbeef.core.gui.GuiSession;
 import me.chiefbeef.core.gui.abstraction.GuiCookie;
 
@@ -101,14 +102,19 @@ public class GuiSessionCookies {
 	 * Get the deepest / most recent known instance of this GuiCookie type. Deepest referring to the page depth
 	 * of the gui when the cookie was added.
 	 * @param type The type of cookie to get.
+	 * @return 
 	 * @return The deepest instance of this type.
 	 */
-	public GuiCookie getDeepestInstanceOf(Class<? extends GuiCookie> type) {
+	public <T extends GuiCookie> T getDeepestInstanceOf(Class<T> type) {
 		DepthTree tree = getTree(type);
 		if (tree == null) {
 			return null;
 		}
-		return tree.getDeepest();
+		GuiCookie cookie = tree.getDeepest();
+		if (!cookie.getClass().isAssignableFrom(type)) {
+			return null;
+		}
+		return type.cast(cookie);
 	}
 	
 	/**

@@ -3,6 +3,7 @@ package me.chiefbeef.core.utility.assets;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -111,17 +112,18 @@ public class AssetRegistry<T> {
 	 * Register a {@link AssetHolder} type using its {@link TypeAssets}.
 	 * This option allows you to register your {@link AssetHolder} types in
 	 * a dynamic order using information held within the assets if they may depend on eachother.
-	 * 
+	 * <p>
 	 * This was a problem that arose in my plugin ExoSuit with technology modules and their upgrade modules.
 	 * Before the assets were obtained i couldnt know which types were dependent on
 	 * eachother without explicity stating it, which is not at all dynamic. i prefer the types themselves to
 	 * declare their dependencies while being loaded.
-	 * 
+	 * </p>
 	 * To get the {@link TypeAssets} you must invoke {@link AssetRegistry#loadAssets(Plugin, Class)}
 	 * @param assets The assets of the {@link Type} to register.
 	 */
 	// TODO I know for a fact this type is an AssetHolder<T> otherwise it couldnt be registered, i just cannot
 	// figure out how to explicitly declare it as such without casting, i haven't learned enough about generics yet, i'll come back to it later.
+	@SuppressWarnings("unchecked")
 	public void register(TypeAssets<T> assets) {
 		Class<? extends T> type = assets.getType();
 		Console.debug("AssetManager<" + this.getClass().toString() + "> Registering: " + type.toString());
@@ -131,6 +133,12 @@ public class AssetRegistry<T> {
 			((AssetHolder<T>) assets.newInstance()).createConfig();
 		} catch (IOException | InvalidConfigurationException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void registerAll(Plugin plugin, List<Class<? extends T>> types) {
+		for (Class<? extends T> type : types) {
+			register(plugin, type);
 		}
 	}
 	

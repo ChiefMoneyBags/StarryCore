@@ -11,6 +11,7 @@ public abstract class GuiButton {
 	private ItemStack item;
 	
 	public GuiButton(Page page, ItemStack item) {
+		this.page = page;
 		this.item = item;
 	}
 	

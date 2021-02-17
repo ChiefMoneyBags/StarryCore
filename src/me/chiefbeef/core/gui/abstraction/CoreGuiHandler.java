@@ -97,7 +97,7 @@ public abstract class CoreGuiHandler {
 	 */
 	public void setSlot(int slot, CustomItem custom) {
 		inv.setItem(slot, custom.getItem());
-		InventoryItemTracker iit = (InventoryItemTracker) custom.getTracker(ItemTracker.INVENTORY);
+		InventoryItemTracker iit = custom.getTracker(InventoryItemTracker.class);
 		if (!iit.isTracking(inv, slot)) {
 			iit.addSlot(inv, slot, true);
 		}

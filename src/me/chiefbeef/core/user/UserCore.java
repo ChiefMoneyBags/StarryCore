@@ -104,8 +104,8 @@ public class UserCore {
 	 * @param type The type of extension
 	 * @return The {@link UserExtension} instance corresponding to type
 	 */
-	public UserExtension getExtension(Class<? extends UserExtension> type) {
-		return extensions.get(type);
+	public <T extends UserExtension> T getExtension(Class<T> type) {
+		return type.cast(extensions.get(type));
 	}
 	
 	/**

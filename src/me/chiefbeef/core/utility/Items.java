@@ -28,7 +28,7 @@ public class Items {
 		if (remaining.size() == 0) {
 			if (CustomItem.isCustom(it)) {
 				CustomItem custom = CustomItem.fromItemStack(it);
-				InventoryItemTracker eit = (InventoryItemTracker) custom.getTracker(ItemTracker.INVENTORY);
+				InventoryItemTracker eit = custom.getTracker(InventoryItemTracker.class);
 				eit.addSlot(inv, slot, true);
 			}
 			return;
@@ -40,7 +40,7 @@ public class Items {
 			Item item = p.getWorld().dropItemNaturally(p.getLocation(), entry.getValue());
 			if (CustomItem.isCustom(entry.getValue())) {
 				CustomItem custom = CustomItem.fromItemStack(entry.getValue());
-				EntityItemTracker eit = (EntityItemTracker) custom.getTracker(ItemTracker.ENTITY);
+				EntityItemTracker eit = custom.getTracker(EntityItemTracker.class);
 				eit.addEntity(item);
 			}
 		}

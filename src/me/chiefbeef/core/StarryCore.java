@@ -1,5 +1,7 @@
 package me.chiefbeef.core;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import me.chiefbeef.core.command.handling.CommandManager;
 import me.chiefbeef.core.customitem.CustomItemEvents;
 import me.chiefbeef.core.user.UserManager;
 
@@ -13,6 +15,7 @@ public class StarryCore extends JavaPlugin {
 	
 	private UserManager userManager;
 	private CustomItemEvents customItem;
+	private CommandManager commands;
 	
 	@Override
 	public void onEnable() {
@@ -33,6 +36,10 @@ public class StarryCore extends JavaPlugin {
 	
 	public CustomItemEvents getCustomItemEvents() {
 		return customItem;
+	}
+	
+	public CommandManager getCommandManager() {
+		return commands;
 	}
 	
 	/**
