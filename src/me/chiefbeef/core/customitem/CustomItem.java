@@ -93,7 +93,7 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 		if (item == null || !item.hasItemMeta()) {
 			return false;
 		}
-		String label = getLabel(item);
+		String label = Meta.get(item, "customItemLabel");
 		return label != null &&
 				getRegistry().getAssets(label) != null;
 	}
