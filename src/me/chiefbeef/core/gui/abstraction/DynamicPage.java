@@ -66,12 +66,17 @@ public abstract class DynamicPage extends Page {
 	 * Valid objects include ItemStack, CustomItem and GuiButton.
 	 * @param items The items to set. Allowed Objects include CustomItem and ItemStack.
 	 */
+	/**
 	public void setDynamicItems(List<Object> items) {
-		//ay im walkin heere
+		this.items = items;
+	}
+	*/
+	
+	public <T extends Object> void setDynamicItems(List<T> t) {
 		if (items == null) {
 			items = new ArrayList<>();
 		}
-		this.items = items;
+		this.items.addAll(t);
 	}
 	
 	/**

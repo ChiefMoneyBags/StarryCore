@@ -163,10 +163,16 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 * 
 	 */
 
+	public static final String
+	ITEM_ID_KEY = "customItemId",
+	ITEM_LABEL_KEY = "customItemLabel";
+	
 	protected DataPack pack;
 	private ItemStack item;
 	private UUID id;
-	private boolean destroyed;
+	private boolean
+	destroyed,
+	built;
 
 	/**
 	 * Tracking all representations of this CustomItem This feature allows complete
@@ -177,7 +183,7 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 
 	@Override
 	public CustomItemAssets createAssets() {
-		return new CustomItemAssets(this.getClass(), this.getLabel());
+		return new CustomItemAssets(this.getClass(), this.getLabel(), this.getFriendlyName());
 	}
 	
 	@Override
@@ -203,12 +209,13 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 		}
 		
 		this.item = cpack.getItemStack();
-		this.id = isCustom(item) ? UUID.fromString(Meta.get(item, "customItemId")) : firstTimeSetup();
+		this.id = isCustom(item) ? UUID.fromString(Meta.get(item, ITEM_ID_KEY)) : firstTimeSetup();
 		loadPersistentData();
 		loadTrackers();
 		itemCache.put(id, this);
 		debugTrackers(true);
 		updateMeta();
+		built = true;
 		return this;
 	}
 	
@@ -221,6 +228,7 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 		this.id = firstTimeSetup();
 		loadTrackers();
 		debugTrackers(true);
+		built = true;
 		return this;
 	}
 	
@@ -233,8 +241,8 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 */
 	protected UUID firstTimeSetup() {
 		UUID uuid = UUID.randomUUID();
-		Meta.put(item, "customItemId", uuid.toString());
-		Meta.put(item, "customItemLabel", getLabel().toUpperCase());
+		Meta.put(item, ITEM_ID_KEY, uuid.toString());
+		Meta.put(item, ITEM_LABEL_KEY, getLabel().toUpperCase());
 		return uuid;
 	}
 
@@ -263,6 +271,9 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 * @return A clone of the ItemStack representing this CustomItem.
 	 */
 	public ItemStack getItem() {
+		if (!isBuilt()) {
+			throw new IllegalStateException("CustomItem objects must be built before they can be used!");
+		}
 		return item.clone();
 	}
 
@@ -270,6 +281,9 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 * @return The UUID of this CustomItem.
 	 */
 	public UUID getUniqueId() {
+		if (!isBuilt()) {
+			throw new IllegalStateException("CustomItem objects must be built before they can be used!");
+		}
 		return id;
 	}
 

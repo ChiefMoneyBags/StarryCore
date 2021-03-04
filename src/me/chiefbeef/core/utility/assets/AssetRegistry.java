@@ -65,11 +65,7 @@ public class AssetRegistry<T> {
 	 */
 	public boolean testClass(Class<? extends T> type) {
 		if (assetMap.containsKey(type)) {
-			Console.generateException("A type cannot be registered more than once! (" + type.toString() + ")");
-			return false;
-		}
-		if (!type.isAssignableFrom(AssetHolder.class)) {
-			Console.generateException("Any type being registered in an AssetRegistry MUST implement AssetHolder!");
+			Console.generateException("A type cannot be registered more than once! (" + type.getSimpleName() + ")");
 			return false;
 		}
 		try {
@@ -95,7 +91,9 @@ public class AssetRegistry<T> {
 	// figure out how to explicitly declare it as such without casting, i haven't learned enough about generics yet, i'll come back to it later.
 	@SuppressWarnings("unchecked")
 	public TypeAssets<T> loadAssets(Plugin plugin, Class<? extends T> type) {
+		Console.debug("--| Loading assets...");
 		if (!testClass(type)) {
+			Console.debug("--| Type failed test cases! returning null...");
 			return null;
 		}
 		try {
@@ -126,7 +124,7 @@ public class AssetRegistry<T> {
 	@SuppressWarnings("unchecked")
 	public void register(TypeAssets<T> assets) {
 		Class<? extends T> type = assets.getType();
-		Console.debug("AssetManager<" + this.getClass().toString() + "> Registering: " + type.toString());
+		Console.debug("--| AssetRegistry Registering: " + type.getSimpleName());
 		assetMap.put(type, assets);
 		
 		try {
@@ -149,7 +147,6 @@ public class AssetRegistry<T> {
 	 * @param type The {@link Type}
 	 */
 	public void register(Plugin plugin, Class<? extends T> type) {
-		Console.debug("AssetManager<" + this.getClass().toString() + "> Registering: " + type.toString());
 		TypeAssets<T> assets = loadAssets(plugin, type);
 		if (assets == null) {
 			return;

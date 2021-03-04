@@ -14,6 +14,7 @@ import me.chiefbeef.core.command.assets.CoreSubCommandAssets;
 import me.chiefbeef.core.command.handling.CoreCommand;
 import me.chiefbeef.core.command.handling.CoreCommandExecutor;
 import me.chiefbeef.core.command.handling.CoreTabCompleter;
+import me.chiefbeef.core.utility.Console;
 import me.chiefbeef.core.utility.assets.TypeAssets;
 
 public abstract class CoreBaseCommand extends CoreCommand {
@@ -53,11 +54,15 @@ public abstract class CoreBaseCommand extends CoreCommand {
 	}
 	
 	public CoreSubCommandAssets getSubCommandWithAlias(String label) {
+		Console.debug("looking for " + label);
 		CoreSubCommandAssets assets = getSubCommand(label);
 		if (assets != null) {
+			Console.debug("found 1");
 			return assets;
 		}
+		
 		Optional<CoreSubCommandAssets> optional = subCommands.stream().filter(sub -> sub.getAliases().contains(label)).findFirst();
+		Console.debug("optional.isPresent " + (optional.isPresent()));
 		return optional.isPresent() ? optional.get() : null;
 	}
 	

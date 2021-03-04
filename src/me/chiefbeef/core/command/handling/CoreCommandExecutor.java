@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import me.chiefbeef.core.command.CoreBaseCommand;
 import me.chiefbeef.core.command.CoreSubCommand;
 import me.chiefbeef.core.command.assets.CoreSubCommandAssets;
+import me.chiefbeef.core.utility.Console;
 
 public class CoreCommandExecutor implements CommandExecutor {
 
@@ -24,6 +25,7 @@ public class CoreCommandExecutor implements CommandExecutor {
 		}
 		CoreSubCommandAssets assets = base.getSubCommandWithAlias(args[0]);
 		if (assets == null) {
+			Console.debug("--| no sub command found");
 			return false;
 		}
 		CoreSubCommand sub = assets.newInstance();

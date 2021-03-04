@@ -13,12 +13,12 @@ import me.chiefbeef.core.gui.abstraction.Page;
 import me.chiefbeef.core.user.UserCore;
 public class GuiTheme {
 
-	private final UserCore user;
+	private final GuiSession session;
 	private GuiColor
 		background, toolbar;
 	
-	public GuiTheme(UserCore user) {
-		this.user = user;
+	public GuiTheme(GuiSession session) {
+		this.session = session;
 		FileConfiguration data = null; //CoreFiles.getUser(user);
 		this.background = GuiColor.valueOf(data.getString("settings.theme.gui.background", "GRAY"));
 		this.toolbar = GuiColor.valueOf(data.getString("settings.theme.gui.toolbar", "BLACK"));
@@ -77,7 +77,7 @@ public class GuiTheme {
 	}
 	
 	public void playSound(GuiSound sound) {
-		((GuiSoundPack) SoundPack.get("BASE_GUI")).play(sound, user);
+		((GuiSoundPack) SoundPack.get("BASE_GUI")).play(sound, session.getUser());
 	}
 	
 	public static enum GuiColor {

@@ -19,7 +19,7 @@ public abstract class GuiTransition extends CoreGuiHandler implements AssetHolde
 	protected Page from, to;
 	// protected BukkitTask animation;
 	private int size, frame, taskId;
-	private boolean selectedItem, complete;
+	private boolean selectedItem, complete, built;
 	
 	private static AssetRegistry<GuiTransition> registry = new AssetRegistry<>();
 	
@@ -46,12 +46,13 @@ public abstract class GuiTransition extends CoreGuiHandler implements AssetHolde
 				: from.getInventory());
 		this.size = to.getInventory().getSize();
 		this.selectedItem = session.getCookies().hasCookie(SelectedItem.class);
+		built = true;
 		return this;
 	}
 	
 	@Override
 	public GuiTransition build(AssetBuildPack pack) {
-		return null;
+		return build();
 	}
 
 	public final void start() {
@@ -196,6 +197,11 @@ public abstract class GuiTransition extends CoreGuiHandler implements AssetHolde
 			return;
 		}
 	}
+	
+	@Override
+	public boolean isBuilt() {
+		return built;
+	}
 
 	/**
 	 * Called when the animation is initially starting before creating the first frame.
@@ -221,6 +227,12 @@ public abstract class GuiTransition extends CoreGuiHandler implements AssetHolde
 	 */
 	public abstract boolean hasNextFrame();
 
-	public abstract String getLabel();
+	/**
+	 * I dont think transitions need a friendly name
+	 */
+	@Override
+	public String getFriendlyName() {
+		return getLabel();
+	}
 
 }

@@ -10,7 +10,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import me.chiefbeef.core.customitem.CustomItem;
-import me.chiefbeef.core.customitem.assets.CustomItemBuildPack;
 import me.chiefbeef.core.utility.Console;
 import me.chiefbeef.core.utility.files.Files;
 
@@ -67,15 +66,22 @@ import me.chiefbeef.core.utility.files.Files;
  */
 public interface AssetHolder<T> {
 	
-	
+	/**
+	 * Creates the config for this AssetHolder if one is required.
+	 * @throws IOException
+	 * @throws InvalidConfigurationException
+	 */
 	public default void createConfig() throws IOException, InvalidConfigurationException {
+		// Not all AssetHolders have configs.
 		if (hasConfig()) {
 			TypeAssets<T> assets = getAssets();
-			Console.debug("--<[ Initializing AssetHolder<" + getClass().getName() + "> files...");
+			Console.debug("--| Initializing " + getClass().getSimpleName() + " files...");
+			// The class inheritance can dynamically manipulate the config path and name
 			File customConfigf = new File(getConfigDirectory(), getConfigName() + ".yml");
 			if (!customConfigf.exists()) {
-				Console.info("Config for AssetHolder<" + getClass().getName() + "> does not exist, creating one...");
+				Console.debug("-<[ Config for AssetHolder<" + getClass().getSimpleName() + "> does not exist, creating one...");
 				customConfigf.getParentFile().mkdirs();
+				// The plugin of origin for this AssetHolder should contain the embedded yml file. 
 				Files.createConfig(getParentPlugin().getResource(getEmbeddedConfigName() + ".yml"), customConfigf);
 			}
 			FileConfiguration customConfig = new YamlConfiguration();
@@ -162,10 +168,28 @@ public interface AssetHolder<T> {
 	public abstract T build();
 	
 	/**
-	 * 
+	 * Check if this AssetHolder has been built and is ready for use.
+	 * AssetHolders must be built before they can be used by invoking the methods {@link AssetHolder#build()} or {@link AssetHolder#build(AssetBuildPack)}.
+	 * @return true if the AssetHolder is built.
+	 */
+	public abstract boolean isBuilt();
+	
+	/**
+	 * Get the unique label of this type following this pattern;
+	 * - All characters are uppercase
+	 * - All spaces are replaced with underscore (_)
 	 * @return The unique label of this type
 	 */
 	public abstract String getLabel();
+	
+	/**
+	 * Get the chat friendly name of this Type. This can be used to identify an AssetHolder Type in
+	 * the game chat and may also be used during file creation to make directories related to this type.
+	 * In the latter case all color codes will be stripped from the name.
+	 * 
+	 * @return The chat friedly name of this type. spaces and color codes are welcome.
+	 */
+	public abstract String getFriendlyName();
 
 
 }

@@ -32,7 +32,7 @@ public abstract class BasicDynamicPage extends DynamicPage {
 	
 	
 	/**
-	 * 
+	 * In depth constructor
 	 * @param session The session of the player owning this gui.
 	 * @param size The size of the gui.
 	 * @param initialIndex The initial index to set the dynamic page to. 
@@ -42,6 +42,19 @@ public abstract class BasicDynamicPage extends DynamicPage {
 		// Force the dynamic page to be at least 3 rows.
 		super(session, size < 36 ? 36 : size, initialIndex);
 		this.indexSlots = indexSlots;
+	}
+	
+	
+	private static int[] ALLOWANCE = new int[] {0, 0, 0, 9, 18, 27};
+	/**
+	 * Simplified constructor
+	 * @param session
+	 * @param size
+	 */
+	public BasicDynamicPage(GuiSession session, int size) {
+		// Force the dynamic page to be at least 3 rows.
+		super(session, size < 36 ? 36 : size, 0);
+		this.indexSlots = ALLOWANCE[size % 9];
 	}
 	
 	@Override

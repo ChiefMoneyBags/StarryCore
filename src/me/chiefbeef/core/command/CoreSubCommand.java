@@ -1,10 +1,12 @@
 package me.chiefbeef.core.command;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
+import me.chiefbeef.core.command.assets.CoreSubCommandAssets;
 import me.chiefbeef.core.command.handling.CoreCommand;
 import me.chiefbeef.core.customitem.CustomItem;
 import me.chiefbeef.core.utility.assets.AssetBuildPack;
@@ -65,12 +67,12 @@ public abstract class CoreSubCommand extends CoreCommand implements AssetHolder<
 	
 	@Override
 	public TypeAssets<CoreSubCommand> createAssets() {
-		return null;
+		return new CoreSubCommandAssets(this.getClass(), this.getLabel(), this.getAliases());
 	}
 
 	@Override
 	public TypeAssets<CoreSubCommand> getAssets() {
-		return null;
+		return registry.getAssets(this.getClass());
 	}
 	
 	@Override
@@ -82,5 +84,20 @@ public abstract class CoreSubCommand extends CoreCommand implements AssetHolder<
 	public CoreSubCommand build() {
 		return this;
 	}
+	
+	@Override
+	public boolean isBuilt() {
+		return true;
+	}
+	
+	/**
+	 * I dont think commands need a friendly name
+	 */
+	@Override
+	public String getFriendlyName() {
+		return getLabel();
+	}
+	
+	public abstract List<String> getAliases();
 
 }

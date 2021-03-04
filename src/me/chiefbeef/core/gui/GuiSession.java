@@ -46,7 +46,7 @@ public class GuiSession {
 		this.user = user;
 		this.history = new GuiSessionHistory(this);
 		this.cookies = new GuiSessionCookies(this);
-		this.theme = new GuiTheme(user);
+		//this.theme = new GuiTheme(user);
 	}
 	
 	/**

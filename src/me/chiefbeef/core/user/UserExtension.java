@@ -82,6 +82,14 @@ public abstract class UserExtension implements AssetHolder<UserExtension> {
 	}
 	
 	/**
+	 * I dont think users need a friendly name
+	 */
+	@Override
+	public String getFriendlyName() {
+		return getLabel();
+	}
+	
+	/**
 	 * Invoked when the {@link Player} disconects from the server.
 	 */
 	public abstract void onQuit();
