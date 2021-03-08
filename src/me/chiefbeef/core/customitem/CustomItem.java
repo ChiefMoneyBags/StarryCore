@@ -23,6 +23,7 @@ import me.chiefbeef.core.customitem.tracking.EntityItemTracker;
 import me.chiefbeef.core.customitem.tracking.InventoryItemTracker;
 import me.chiefbeef.core.customitem.tracking.ItemTracker;
 import me.chiefbeef.core.user.UserCore;
+import me.chiefbeef.core.utility.Console;
 import me.chiefbeef.core.utility.assets.AssetBuildPack;
 import me.chiefbeef.core.utility.assets.AssetHolder;
 import me.chiefbeef.core.utility.assets.AssetRegistry;
@@ -93,7 +94,7 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 		if (item == null || !item.hasItemMeta()) {
 			return false;
 		}
-		String label = getLabel(item);
+		String label = Meta.get(item, "customItemLabel");
 		return label != null &&
 				getRegistry().getAssets(label) != null;
 	}
@@ -122,7 +123,8 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 		}
 		String label = getLabel(item);
 		CustomItem custom = getRegistry().getAssets(label).newInstance();
-		return custom.build(new CustomItemBuildPack(item));
+		custom.applyBuildPack(new CustomItemBuildPack(item));
+		return custom.build();
 	}
 
 	/**
@@ -163,10 +165,16 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 * 
 	 */
 
+	public static final String
+	ITEM_ID_KEY = "customItemId",
+	ITEM_LABEL_KEY = "customItemLabel";
+	
 	protected DataPack pack;
 	private ItemStack item;
 	private UUID id;
-	private boolean destroyed;
+	private boolean
+	destroyed,
+	built;
 
 	/**
 	 * Tracking all representations of this CustomItem This feature allows complete
@@ -177,7 +185,7 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 
 	@Override
 	public CustomItemAssets createAssets() {
-		return new CustomItemAssets(this.getClass(), this.getLabel());
+		return new CustomItemAssets(this.getClass(), this.getLabel(), this.getFriendlyName());
 	}
 	
 	@Override
@@ -189,11 +197,13 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 * Construct the CustomItem using a build pack.
 	 */
 	@Override
-	public CustomItem build(AssetBuildPack pack) {
-		if (id != null) {return this;}
+	public void applyBuildPack(AssetBuildPack pack) {
+		if (this.isBuilt()) {
+			return;
+		}
 		
 		if (!(pack instanceof CustomItemBuildPack)) {
-			throw new IllegalArgumentException("CustomItems require a CustomItemBuildPack to be built!");
+			throw new IllegalArgumentException("CustomItems require a CustomItemBuildPack!");
 		}
 		
 		CustomItemBuildPack cpack = (CustomItemBuildPack) pack;
@@ -203,24 +213,23 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 		}
 		
 		this.item = cpack.getItemStack();
-		this.id = isCustom(item) ? UUID.fromString(Meta.get(item, "customItemId")) : firstTimeSetup();
-		loadPersistentData();
-		loadTrackers();
 		itemCache.put(id, this);
-		debugTrackers(true);
-		updateMeta();
-		return this;
 	}
 	
 	
 	@Override
 	public CustomItem build() {
-		if (id != null) {return this;}
-		this.item = new ItemStack(getMaterial().asMaterial());
-		updateMeta();
-		this.id = firstTimeSetup();
-		loadTrackers();
-		debugTrackers(true);
+		if (this.isBuilt()) {
+			return this;
+		}
+		if (this.item == null) {
+			this.item = new ItemStack(getMaterial().asMaterial());	
+		}
+		this.updateMeta();
+		this.id = isCustom(item) ? UUID.fromString(Meta.get(item, ITEM_ID_KEY)) : firstTimeSetup();
+		this.loadTrackers();
+		this.debugTrackers(true);
+		this.built = true;
 		return this;
 	}
 	
@@ -233,8 +242,8 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 */
 	protected UUID firstTimeSetup() {
 		UUID uuid = UUID.randomUUID();
-		Meta.put(item, "customItemId", uuid.toString());
-		Meta.put(item, "customItemLabel", getLabel().toUpperCase());
+		Meta.put(item, ITEM_ID_KEY, uuid.toString());
+		Meta.put(item, ITEM_LABEL_KEY, getLabel().toUpperCase());
 		return uuid;
 	}
 
@@ -263,6 +272,9 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 * @return A clone of the ItemStack representing this CustomItem.
 	 */
 	public ItemStack getItem() {
+		if (!isBuilt()) {
+			throw new IllegalStateException("CustomItem objects must be built before they can be used!");
+		}
 		return item.clone();
 	}
 
@@ -270,6 +282,9 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 * @return The UUID of this CustomItem.
 	 */
 	public UUID getUniqueId() {
+		if (!isBuilt()) {
+			throw new IllegalStateException("CustomItem objects must be built before they can be used!");
+		}
 		return id;
 	}
 
@@ -370,6 +385,32 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 		for (ItemTracker tracker : trackers.values()) {
 			tracker.updateItem();
 		}
+	}
+	
+	/**
+	 * Get the tempurature of the environment this CustomItem it within. Takes into account 1 of the following possibilities;
+	 * - The location of the Item entity if it is on the ground.
+	 * - The Location of the Player holding this item either in their cursor or inventory.
+	 * - The location of containers such as chests that may hold this item.
+	 * @return The resulting tempurature of the CustomItem.
+	 */
+	public double getAmbientTempurature() {
+		int temp = -999;
+		if (this.getTracker(EntityItemTracker.class).holdsReference()) {
+			Console.debug("--| Component is on ground. Using entity location tempurature...");
+			return this.getTracker(EntityItemTracker.class).getEntities().get(0).getLocation().getBlock().getTemperature();
+		} else if (this.getTracker(CursorItemTracker.class).holdsReference()) {
+			Console.debug("--| Component is in player cursor. Using player location tempurature...");
+			return this.getTracker(CursorItemTracker.class).getCursorPlayers().get(0).getLocation().getBlock().getTemperature();
+		} else if (this.getTracker(InventoryItemTracker.class).holdsReference()) {
+			Console.debug("--| Component is in an inventory FML. further checks needed...");
+			//InventoryItemTracker tracker = this.getTracker(InventoryItemTracker.class);
+			return 0;
+			// 1) check if module in player inv use player location
+			// 2) check if module in Page, use gui session holder location
+			// 3) check if module in container use container location
+		}
+		return temp;
 	}
 
 	/**
@@ -477,5 +518,10 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 				}
 			}.runTaskTimer(getAssets().getParentPlugin(), 1, 2);
 		}
+	}
+	
+	@Override
+	public boolean isBuilt() {
+		return built;
 	}
 }

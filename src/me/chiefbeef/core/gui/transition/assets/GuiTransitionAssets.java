@@ -8,12 +8,12 @@ public class GuiTransitionAssets extends TypeAssets<GuiTransition> {
 	private Class<? extends GuiTransition> inverse;
 
 	public GuiTransitionAssets(Class<? extends GuiTransition> clazz, String label) {
-		super(clazz, label);
+		super(clazz, label, label);
 		this.inverse = clazz;
 	}
 	
 	public GuiTransitionAssets(Class<? extends GuiTransition> clazz, Class<? extends GuiTransition> inverse, String label) {
-		super(clazz, label);
+		super(clazz, label, label);
 		this.inverse = inverse;
 	}
 	

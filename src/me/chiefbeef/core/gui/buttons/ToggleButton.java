@@ -8,19 +8,19 @@ import me.chiefbeef.core.utility.ConsumerPair;
 import me.chiefbeef.core.utility.PredicatePair;
 
 /**
- * {@link GuiConditional} is a {@link GuiButton} type that allows conditional functions to be applied to a {@link Page} slot dynamically
+ * {@link ToggleButton} is a {@link GuiButton} type that allows conditional functions to be applied to a {@link Page} slot dynamically
  * without needing to create new {@link Page} children objects or hard coded buttons inside the {@link Page#onClick(org.bukkit.event.inventory.InventoryClickEvent)}
  * 
  * Registered functions are invoked on the objects within the supplied {@link ConsumerPair}(s) when a user
  * clicks on the gui slot. The chosen set of functions to invoke is dependent on the outcome of the given {@link PredicatePair}.
  * 
- * In addition the {@link GuiConditional} has the ability to automatically change the {@link GuiButton} display item in accordance with the
+ * In addition the {@link ToggleButton} has the ability to automatically change the {@link GuiButton} display item in accordance with the
  * outcome of the {@link PredicatePair}.
  * 
  * Useful to create toggle on/off buttons
  * @author Kevin
  */
-public class GuiConditional extends GuiButton {
+public class ToggleButton extends GuiButton {
 	
 	private ItemStack
 		itemTrue,
@@ -32,7 +32,7 @@ public class GuiConditional extends GuiButton {
 		ifTrue,
 		ifFalse;
 	
-	public GuiConditional(Page page, PredicatePair<?> condition, ConsumerPair<?> ifTrue, ItemStack itemTrue, ConsumerPair<?> ifFalse, ItemStack itemFalse) {
+	public ToggleButton(Page page, PredicatePair<?> condition, ConsumerPair<?> ifTrue, ItemStack itemTrue, ConsumerPair<?> ifFalse, ItemStack itemFalse) {
 		super(page, null);
 		this.condition = condition;
 		this.ifTrue = ifTrue;

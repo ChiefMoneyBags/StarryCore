@@ -22,11 +22,12 @@ public abstract class TypeAssets<T> {
 	private Class<? extends T> type;
 	private File configf;
 	private FileConfiguration config;
-	private String label;
+	private String label, friendlyName;
 	
-	public TypeAssets(Class<? extends T> type, String label) {
+	public TypeAssets(Class<? extends T> type, String label, String friendlyName) {
 		this.type = type;
 		this.label = label;
+		this.friendlyName = friendlyName;
 	}
 	
 	public void setParentPlugin(Plugin plugin) {
@@ -59,6 +60,10 @@ public abstract class TypeAssets<T> {
 	
 	public String getLabel() {
 		return label;
+	}
+	
+	public String getFriendlyName() {
+		return friendlyName;
 	}
 	
 	/**

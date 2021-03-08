@@ -9,7 +9,6 @@ import me.chiefbeef.core.utility.persistence.DataPack;
 
 public final class Link extends GuiButton {
 
-	private DataPack data;
 	private Class<? extends Page> destination;
 	private Class<? extends GuiTransition> type;
 	
@@ -17,7 +16,6 @@ public final class Link extends GuiButton {
 		super(page, item);
 		this.destination = destination;
 		this.type = type;
-		this.data = data;
 	}
 	
 	public Link(Page page, ItemStack item, Class<? extends Page> destination, Class<? extends GuiTransition> type) {
@@ -32,10 +30,6 @@ public final class Link extends GuiButton {
 	
 	public Class<? extends GuiTransition> getTransition() {
 		return type;
-	}
-	
-	public DataPack getData() {
-		return data;
 	}
 	
 	@Override

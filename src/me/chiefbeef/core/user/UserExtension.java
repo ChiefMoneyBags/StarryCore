@@ -54,7 +54,7 @@ public abstract class UserExtension implements AssetHolder<UserExtension> {
 	 * UserExtension does not require an {@link AssetBuildPack}
 	 */
 	@Override
-	public UserExtension build(AssetBuildPack pack) {
+	public void applyBuildPack(AssetBuildPack pack) {
 		throw new UnsupportedOperationException();
 	}
 	
@@ -79,6 +79,14 @@ public abstract class UserExtension implements AssetHolder<UserExtension> {
 	@Override
 	public boolean hasConfig() {
 		return false;
+	}
+	
+	/**
+	 * I dont think users need a friendly name
+	 */
+	@Override
+	public String getFriendlyName() {
+		return getLabel();
 	}
 	
 	/**

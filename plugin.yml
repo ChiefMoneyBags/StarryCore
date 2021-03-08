@@ -1,5 +1,5 @@
-name: MoneyCore
-main: me.chiefbeef.core.Core
+name: StarryCore
+main: me.chiefbeef.core.StarryCore
 version: 1.0
 author: Chief
 api-version: 1.13

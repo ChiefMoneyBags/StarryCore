@@ -2111,7 +2111,7 @@ public enum CompatMaterial {
 	}
 	
 	private void resolve() {
-		Console.debug("Resolving: " + this.toString());
+		//Console.debug("Resolving: " + this.toString());
 		try {
 			this.mat = Material.valueOf(this.toString());
 			newMap.put(this.mat, this);

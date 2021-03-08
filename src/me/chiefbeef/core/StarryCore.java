@@ -19,9 +19,10 @@ public class StarryCore extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
+		StarryCore.starry = this;
 		userManager = new UserManager(this);
 		customItem = new CustomItemEvents(this);
-		
+		commands = new CommandManager(this);
 	}
 	
 	@Override

@@ -10,7 +10,7 @@ public class CoreSubCommandAssets extends TypeAssets<CoreSubCommand> {
 	private List<String> alias;
 	
 	public CoreSubCommandAssets(Class<? extends CoreSubCommand> type, String label, List<String> alias) {
-		super(type, label);
+		super(type, label, label);
 		this.alias = alias;
 	}
 	

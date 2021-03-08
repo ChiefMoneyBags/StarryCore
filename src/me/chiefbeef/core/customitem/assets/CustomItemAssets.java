@@ -5,8 +5,8 @@ import me.chiefbeef.core.utility.assets.TypeAssets;
 
 public class CustomItemAssets extends TypeAssets<CustomItem> {
 	
-	public CustomItemAssets(Class<? extends CustomItem> clazz, String label) {
-		super(clazz, label);
+	public CustomItemAssets(Class<? extends CustomItem> clazz, String label, String friendlyName) {
+		super(clazz, label, friendlyName);
 	}
 	
 }
