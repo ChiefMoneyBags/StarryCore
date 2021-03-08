@@ -158,7 +158,7 @@ public interface AssetHolder<T> {
 	 * requires a UserCore instance in its constructor to load player data, then CustomItem requires an ItemStack in its constructor
 	 * to load ItemMeta. the API cannot know these things and as such cannot obtain any {@link TypeAssets}.
 	 */
-	public abstract T build(AssetBuildPack pack);
+	public abstract void applyBuildPack(AssetBuildPack pack);
 	
 	
 	/**

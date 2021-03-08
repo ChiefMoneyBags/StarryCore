@@ -54,7 +54,7 @@ public abstract class UserExtension implements AssetHolder<UserExtension> {
 	 * UserExtension does not require an {@link AssetBuildPack}
 	 */
 	@Override
-	public UserExtension build(AssetBuildPack pack) {
+	public void applyBuildPack(AssetBuildPack pack) {
 		throw new UnsupportedOperationException();
 	}
 	

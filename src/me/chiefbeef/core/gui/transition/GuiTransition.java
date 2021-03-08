@@ -51,8 +51,8 @@ public abstract class GuiTransition extends CoreGuiHandler implements AssetHolde
 	}
 	
 	@Override
-	public GuiTransition build(AssetBuildPack pack) {
-		return build();
+	public void applyBuildPack(AssetBuildPack pack) {
+		throw new UnsupportedOperationException();
 	}
 
 	public final void start() {

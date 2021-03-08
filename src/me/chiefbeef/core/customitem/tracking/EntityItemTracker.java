@@ -30,6 +30,10 @@ public class EntityItemTracker extends ItemTracker {
 		entities.add(item);
 	}
 	
+	public List<Item> getEntities() {
+		return new ArrayList<>(entities);
+	}
+	
 	public void removeEntity(Item item) {
 		Console.debug("remove entity");
 		entities.remove(item);

@@ -76,8 +76,8 @@ public abstract class CoreSubCommand extends CoreCommand implements AssetHolder<
 	}
 	
 	@Override
-	public CoreSubCommand build(AssetBuildPack pack) {
-		return this;
+	public void applyBuildPack(AssetBuildPack pack) {
+		return;
 	}
 
 	@Override
