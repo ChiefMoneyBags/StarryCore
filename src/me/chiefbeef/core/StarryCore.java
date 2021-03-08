@@ -1,4 +1,6 @@
 package me.chiefbeef.core;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.chiefbeef.core.command.handling.CommandManager;
@@ -40,6 +42,7 @@ public class StarryCore extends JavaPlugin {
 	}
 	
 	public CommandManager getCommandManager() {
+		
 		return commands;
 	}
 	
