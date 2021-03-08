@@ -435,7 +435,14 @@ public class CustomItemEvents implements Listener {
 		Player p = user.getPlayer();
 		ItemStack i = p.getInventory().getItemInMainHand();
 
-		Interaction action = Interaction.convert(((PacketPlayInUseEntity) packet).b().toString());
+		Interaction action;
+		try {
+			action = Interaction.convert(packet.getClass().getField("b").get(packet).toString());
+		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e1) {
+			e1.printStackTrace();
+			return;
+		}
+		
 		if (i != null && CustomItem.isCustom(i)) {
 			CustomItem custom = CustomItem.fromItemStack(i);
 			if (custom.onInteract(user, action, e))
