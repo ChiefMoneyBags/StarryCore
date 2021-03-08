@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -349,6 +350,13 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 		if (onUnload()) {
 			itemCache.remove(this.id);
 		}
+	}
+	
+	public void setHeadTexture(String url) {
+		if (!(this.item.getItemMeta() instanceof SkullMeta)) {
+			return;
+		}
+		Meta.setHeadTexture((SkullMeta) this.item.getItemMeta(), url);
 	}
 
 	public void setType(Material mat) {
