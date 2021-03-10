@@ -1,4 +1,4 @@
-package me.chiefbeef.core.gui.abstraction;
+package me.chiefbeef.core.gui.cookie;
 
 public abstract class GuiCookie {
 

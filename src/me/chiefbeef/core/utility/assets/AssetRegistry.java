@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.Plugin;
 
-import me.chiefbeef.core.customitem.CustomItem;
 import me.chiefbeef.core.utility.Console;
 
 public class AssetRegistry<T> {
@@ -93,12 +92,13 @@ public class AssetRegistry<T> {
 	public TypeAssets<T> loadAssets(Plugin plugin, Class<? extends T> type) {
 		Console.debug("--| Loading assets...");
 		if (!testClass(type)) {
-			Console.debug("--| Type failed test cases! returning null...");
+			Console.debug("--| Type failed test cases! returning null...", "");
 			return null;
 		}
 		try {
-			TypeAssets<T> assets = ((AssetHolder<T>)type.getConstructor().newInstance()).createAssets();
+			TypeAssets<T> assets = ((AssetHolder<T>) type.getConstructor().newInstance()).createAssets();
 			assets.setParentPlugin(plugin);
+			Console.debug("--| Assets were loaded: " + assets.getClass().getSimpleName(), "");
 			return assets;
 		} catch (Exception e) {
 			e.printStackTrace();

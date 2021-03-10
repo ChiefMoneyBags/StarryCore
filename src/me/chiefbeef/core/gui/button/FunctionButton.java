@@ -1,11 +1,11 @@
-package me.chiefbeef.core.gui.buttons;
+package me.chiefbeef.core.gui.button;
 
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.inventory.ItemStack;
 
 import me.chiefbeef.core.gui.GuiSession;
-import me.chiefbeef.core.gui.abstraction.Page;
+import me.chiefbeef.core.gui.page.Page;
 import me.chiefbeef.core.utility.ConsumerPair;
 
 /**

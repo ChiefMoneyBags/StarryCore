@@ -11,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import me.chiefbeef.core.customitem.CustomItem;
 import me.chiefbeef.core.customitem.tracking.EntityItemTracker;
 import me.chiefbeef.core.customitem.tracking.InventoryItemTracker;
-import me.chiefbeef.core.customitem.tracking.ItemTracker;
 import me.chiefbeef.core.user.UserCore;
 
 public class Items {

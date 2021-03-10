@@ -1,4 +1,4 @@
-package me.chiefbeef.core.gui.abstraction;
+package me.chiefbeef.core.gui.page.variant.dynamic;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,8 +9,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import me.chiefbeef.core.customitem.CustomItem;
 import me.chiefbeef.core.gui.GuiSession;
 import me.chiefbeef.core.gui.GuiTheme.GuiElement;
-import me.chiefbeef.core.gui.transition.swipe.TransitionSwipeLeft;
-import me.chiefbeef.core.gui.transition.swipe.TransitionSwipeRight;
+import me.chiefbeef.core.gui.page.Page;
+import me.chiefbeef.core.gui.transition.variant.swipe.TransitionSwipeLeft;
+import me.chiefbeef.core.gui.transition.variant.swipe.TransitionSwipeRight;
 import me.chiefbeef.core.utility.Console;
 import me.chiefbeef.core.utility.persistence.gui.PersistentSlotHolder;
 
@@ -64,9 +65,7 @@ public abstract class BasicDynamicPage extends DynamicPage {
 		
 		if (hasIndex(getCurrentIndex() + 1)) {
 			applyElement(GuiElement.NEXT_PAGE, inv.getSize()-1);
-		}
-		
-		if (hasIndex(getCurrentIndex() - 1)) {
+		} else if (hasIndex(getCurrentIndex() - 1)) {
 			applyElement(GuiElement.PREV_PAGE, inv.getSize()-9);
 		}
 		
@@ -95,7 +94,7 @@ public abstract class BasicDynamicPage extends DynamicPage {
 	 * @param indexSlots The amount of slots allowed in this specific page index.
 	 * @return The list of dynamic slots in the current page index.
 	 */
-	private static final List<Integer> genericRow = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
+	private static final List<Integer> GENERIC_ROW = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 	public List<Integer> calculateDynamicSlots() {
 		dynamicSlots.clear();
 		int rows = (int) Math.floor(inv.getSize() / 9) - 3;
@@ -104,7 +103,7 @@ public abstract class BasicDynamicPage extends DynamicPage {
 		int indexTotal = 0;
 		for (int currentRow = 0; currentRow < rows; currentRow++) {
 			for (int slot: indexTotal + 7 > dynamicRemainder ? getRowLayout(dynamicRemainder - indexTotal)
-					: indexTotal + 7 > indexSlots ? getRowLayout(indexSlots - indexTotal) : genericRow) {
+					: indexTotal + 7 > indexSlots ? getRowLayout(indexSlots - indexTotal) : GENERIC_ROW) {
 				indexTotal++;
 				dynamicSlots.add(slot + (9 * (currentRow+1)));
 			}
@@ -112,7 +111,6 @@ public abstract class BasicDynamicPage extends DynamicPage {
 				break;
 			}
 		}
-		Console.debug(dynamicSlots);
 		return dynamicSlots;
 	}
 	
@@ -136,11 +134,15 @@ public abstract class BasicDynamicPage extends DynamicPage {
 		}
 		
 		Iterator<Object> itItems = items.iterator();
-		for (int i = 0; i < skipdex; i++) {itItems.next();}
+		// skip all items from previous indexes
+		for (int i = 0; i < skipdex; i++) {
+			itItems.next();
+		}
 		Iterator<Integer> itSlots = dynamicSlots.iterator();
 		while(itItems.hasNext() && itSlots.hasNext()) {
 			Object item = itItems.next();
 			int slot = itSlots.next();
+			Console.debug("", item, slot);
 			setSlotObject(slot, item);
 		}
 	}

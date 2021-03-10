@@ -1,20 +1,41 @@
 package me.chiefbeef.core.gui.transition;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import me.chiefbeef.core.gui.abstraction.CoreGuiHandler;
-import me.chiefbeef.core.gui.abstraction.DynamicPage;
-import me.chiefbeef.core.gui.abstraction.Page;
-import me.chiefbeef.core.gui.abstraction.StaticPage;
-import me.chiefbeef.core.gui.cookies.SelectedItem;
+import org.bukkit.plugin.Plugin;
+
+import me.chiefbeef.core.gui.cookie.variant.SelectedItem;
+import me.chiefbeef.core.gui.page.CoreGuiHandler;
+import me.chiefbeef.core.gui.page.Page;
+import me.chiefbeef.core.gui.page.variant.dynamic.DynamicPage;
+import me.chiefbeef.core.gui.page.variant.dynamic.StaticPage;
 import me.chiefbeef.core.gui.transition.assets.GuiTransitionAssets;
+import me.chiefbeef.core.gui.transition.variant.other.TransitionGlitch;
+import me.chiefbeef.core.gui.transition.variant.other.TransitionItemSelect;
+import me.chiefbeef.core.gui.transition.variant.scan.TransitionScanLeft;
+import me.chiefbeef.core.gui.transition.variant.swipe.TransitionSwipeLeft;
+import me.chiefbeef.core.gui.transition.variant.swipe.TransitionSwipeRight;
 import me.chiefbeef.core.utility.assets.AssetBuildPack;
 import me.chiefbeef.core.utility.assets.AssetHolder;
 import me.chiefbeef.core.utility.assets.AssetRegistry;
 import me.chiefbeef.core.utility.gui.Pages;
 
 public abstract class GuiTransition extends CoreGuiHandler implements AssetHolder<GuiTransition>, Runnable {
+	
+	public static List<Class<? extends GuiTransition>> INTERNAL_TYPES = Arrays.asList(
+			TransitionSwipeLeft.class, TransitionSwipeRight.class,
+			TransitionGlitch.class, TransitionItemSelect.class,
+			TransitionScanLeft.class);
+	
+	public static void registerInternalTypes(Plugin plugin) {
+		for (Class<? extends GuiTransition> type : INTERNAL_TYPES) {
+			GuiTransition.getRegistry().register(plugin, type);
+		}
+	}
 	
 	protected Page from, to;
 	// protected BukkitTask animation;
@@ -57,6 +78,7 @@ public abstract class GuiTransition extends CoreGuiHandler implements AssetHolde
 
 	public final void start() {
 		taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(getGuiSession().getUser().getManager().getStarry(), this, 0, 1);
+		session.openInventory(inv);
 		this.onStart();
 	}
 
@@ -177,6 +199,11 @@ public abstract class GuiTransition extends CoreGuiHandler implements AssetHolde
 		if (Pages.isToolbar(to.getInventory(), slot) && !to.animateToolbar() && from == to) {
 			return false;
 		}
+		
+		if (slot > inv.getSize() - 1 || slot < 0) {
+			return false;
+		}
+		
 		return !(Pages.isTopEdge(slot) && selectedItem);
 	}
 

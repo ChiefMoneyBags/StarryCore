@@ -1,10 +1,7 @@
 package me.chiefbeef.core.command;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-
-import org.bukkit.command.CommandSender;
 
 import me.chiefbeef.core.command.assets.CoreSubCommandAssets;
 import me.chiefbeef.core.command.handling.CoreCommand;

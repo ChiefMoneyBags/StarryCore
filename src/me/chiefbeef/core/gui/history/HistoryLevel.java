@@ -1,6 +1,6 @@
 package me.chiefbeef.core.gui.history;
 
-import me.chiefbeef.core.gui.abstraction.Page;
+import me.chiefbeef.core.gui.page.Page;
 import me.chiefbeef.core.gui.transition.assets.GuiTransitionAssets;
 
 public class HistoryLevel {

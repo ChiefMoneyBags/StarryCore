@@ -1,8 +1,8 @@
-package me.chiefbeef.core.gui.cookies;
+package me.chiefbeef.core.gui.cookie.variant;
 
 import org.bukkit.inventory.ItemStack;
 
-import me.chiefbeef.core.gui.abstraction.GuiCookie;
+import me.chiefbeef.core.gui.cookie.GuiCookie;
 
 public class SelectedItem extends GuiCookie {
 

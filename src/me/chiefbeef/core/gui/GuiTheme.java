@@ -9,8 +9,7 @@ import me.chiefbeef.core.aesthetic.sound.interfacing.GuiSoundPack;
 import me.chiefbeef.core.aesthetic.sound.interfacing.GuiSoundPack.GuiSound;
 import me.chiefbeef.core.compatibility.CompatMaterial;
 import me.chiefbeef.core.customitem.Meta;
-import me.chiefbeef.core.gui.abstraction.Page;
-import me.chiefbeef.core.user.UserCore;
+import me.chiefbeef.core.gui.page.Page;
 public class GuiTheme {
 
 	private final GuiSession session;
@@ -20,8 +19,10 @@ public class GuiTheme {
 	public GuiTheme(GuiSession session) {
 		this.session = session;
 		FileConfiguration data = null; //CoreFiles.getUser(user);
-		this.background = GuiColor.valueOf(data.getString("settings.theme.gui.background", "GRAY"));
-		this.toolbar = GuiColor.valueOf(data.getString("settings.theme.gui.toolbar", "BLACK"));
+		this.background = GuiColor.valueOf("GRAY");
+		this.toolbar = GuiColor.valueOf("BLACK");
+		//this.background = GuiColor.valueOf(data.getString("settings.theme.gui.background", "GRAY"));
+		//this.toolbar = GuiColor.valueOf(data.getString("settings.theme.gui.toolbar", "BLACK"));
 	}
 	
 	public ItemStack get(Page page, int slot) {

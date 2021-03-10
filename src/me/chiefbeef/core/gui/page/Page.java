@@ -1,4 +1,4 @@
-package me.chiefbeef.core.gui.abstraction;
+package me.chiefbeef.core.gui.page;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,22 +13,24 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import me.chiefbeef.core.compatibility.CompatSound;
 import me.chiefbeef.core.customitem.CustomItem;
 import me.chiefbeef.core.customitem.tracking.CursorItemTracker;
 import me.chiefbeef.core.customitem.tracking.InventoryItemTracker;
-import me.chiefbeef.core.customitem.tracking.ItemTracker;
 import me.chiefbeef.core.gui.CustomLayout;
 import me.chiefbeef.core.gui.GuiSession;
 import me.chiefbeef.core.gui.GuiTheme;
 import me.chiefbeef.core.gui.GuiTheme.GuiElement;
-import me.chiefbeef.core.gui.buttons.GuiButton;
-import me.chiefbeef.core.gui.cookies.SelectedItem;
-import me.chiefbeef.core.gui.cookies.GuiSessionCookies;
+import me.chiefbeef.core.gui.button.GuiButton;
+import me.chiefbeef.core.gui.cookie.GuiSessionCookies;
+import me.chiefbeef.core.gui.cookie.variant.SelectedItem;
 import me.chiefbeef.core.utility.Console;
+import me.chiefbeef.core.utility.gui.InventoryResolution;
 import me.chiefbeef.core.utility.gui.Pages;
 import me.chiefbeef.core.utility.persistence.gui.PersistentSlotHolder;
 
@@ -64,10 +66,17 @@ public abstract class Page extends CoreGuiHandler {
 	 * @param e
 	 */
 	public void onDrag(final InventoryDragEvent e) {
-		final Inventory clicked = e.getInventory();
-		if (clicked != inv) {
+		int rawSlot= -999;
+		for (int slot: e.getRawSlots()) {
+			rawSlot = slot;
+		}
+		InventoryResolution resolution = Pages.resolveInventory(e.getView(), rawSlot);
+		Inventory clicked = resolution.getInventory();
+		if (clicked != super.getInventory()) {
+			Console.debug("", "drag event different inv");
 			return;
 		}
+		Console.debug("", "canceling drag");
 		e.setCancelled(true);
 		Set<Integer> slots = e.getInventorySlots();
 		if (slots.size() > 0) {
@@ -112,7 +121,7 @@ public abstract class Page extends CoreGuiHandler {
 			ItemStack current = e.getCurrentItem();
 			
 			if (!canPlace(slot, cursor, current) || onPlaceable(slot, cursor, current)) {
-				Console.debug("--|> Place cancelled...");
+				Console.debug("--|> Place cancelled... ");
 				return;
 			}
 			
@@ -222,10 +231,11 @@ public abstract class Page extends CoreGuiHandler {
 			}
 		}
 		
-		Console.debug("------> " + ( (placed == null || placed.getType() == Material.AIR)
-				&& (got == null || got.getType() == Material.AIR || Pages.isBaseTile(got))));
-		return !( (placed == null || placed.getType() == Material.AIR)
-				&& (got == null || got.getType() == Material.AIR || Pages.isBaseTile(got)));
+		if (placed == null || placed.getType() == Material.AIR && Pages.isBaseTile(got)) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	/**
@@ -245,13 +255,13 @@ public abstract class Page extends CoreGuiHandler {
 	public void build() {
 		GuiTheme theme = session.getTheme();
 		for (int i = 0; i < inv.getSize() - 9; i++) {
-			setSlot(i, theme.get(GuiElement.BACKGROUND));
+			this.setSlot(i, theme.get(GuiElement.BACKGROUND));
 		}
 		for (int i = inv.getSize() - 9; i < inv.getSize(); i++) {
-			setSlot(i, theme.get(GuiElement.TOOLBAR));
+			this.setSlot(i, theme.get(GuiElement.TOOLBAR));
 		}
 		if (session.getHistory().hasPreviousPage()) {
-			setSlot(inv.getSize()-5, theme.get(GuiElement.BACK_BUTTON));
+			this.setSlot(inv.getSize()-5, theme.get(GuiElement.BACK_BUTTON));
 		}
 		GuiSessionCookies cookies = session.getCookies();
 		if (cookies.hasCookie(SelectedItem.class)) {

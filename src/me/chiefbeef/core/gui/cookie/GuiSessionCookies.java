@@ -1,12 +1,10 @@
-package me.chiefbeef.core.gui.cookies;
+package me.chiefbeef.core.gui.cookie;
 
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import me.chiefbeef.core.customitem.tracking.ItemTracker;
 import me.chiefbeef.core.gui.GuiSession;
-import me.chiefbeef.core.gui.abstraction.GuiCookie;
 
 /**
  * GuiSessionCookies allows data to be applied to a users GuiSession that may impact / affect Page construction

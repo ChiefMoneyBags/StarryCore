@@ -46,6 +46,7 @@ public class UserManager {
 	
 	public void onDisable() {
 		for (UserCore user: users.values()) {
+			user.getGuiSession().end();
 			user.save();
 		}
 	}

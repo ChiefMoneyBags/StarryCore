@@ -79,7 +79,7 @@ public abstract class TypeAssets<T> {
 			e.printStackTrace();
 			return null;
 		} catch (NoSuchMethodException e) {
-			Console.generateException("For an AssetHolder<> type to be dynamically instantiated by the core it must contain an empty constructor and follow a builder pattern for its construction.");
+			Console.generateException("For an AssetHolder<> type to be dynamically instantiated by the core it must contain no constructors and follow a builder pattern for its construction.");
 			return null;
 		}
 	}

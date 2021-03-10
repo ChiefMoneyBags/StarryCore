@@ -7,8 +7,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
-import me.chiefbeef.core.utility.Console;
-
 /**
  * The enum constants in CompatMaterial are based on the 1.15.2 Material enum.
  * @author ChiefMoneyBags
@@ -2123,7 +2121,7 @@ public enum CompatMaterial {
 				dataMap.put(this.data, this);
 				legacyMap.put(this.mat, dataMap);
 			} catch (Exception e1) {
-				e.printStackTrace();
+
 			}
 		}
 	}
