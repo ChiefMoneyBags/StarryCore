@@ -5,7 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import me.chiefbeef.core.customitem.Meta;
@@ -135,7 +138,7 @@ public class Pages {
 	}
 	
 	public static boolean isCenter(int slot) {
-		for (int i: center) 
+		for (int i: center)
 			if (i == slot)
 				return true;
 		return false;
@@ -182,4 +185,28 @@ public class Pages {
 		return copy;
 	}
 	
+	/**
+	 * Resolve the actual clicked inventory and actual slot number based off a raw slot number
+	 * from an InventoryDragEvent. 
+	 * @param view The InventoryView where the drag occured
+	 * @param rawSlot The rawslot of the InventoryView.
+	 * @return An InventoryResolution containing the actual slot and Inventory clicked.
+	 */
+	public static InventoryResolution resolveInventory(InventoryView view, int rawSlot) {
+		Inventory inv = view.getInventory(rawSlot);
+		// actual slot number for the inventory clicked.
+		int actualSlot = view.getSlotType(rawSlot) ==
+		// if clicked is quickbar, slot = the raw slot - (viewtype=crafting? 36) else
+		// top inv.size + 36. because technically the view has 3 inventories.
+		SlotType.QUICKBAR ? // this tracks the off hand slot
+				rawSlot - (view.getType() == InventoryType.CRAFTING ? (rawSlot == 45 ? 5 : 36)
+						: view.getTopInventory().getSize() + 27)
+
+				// if clicked is not the quickbar slot = (clicked inv is top inv? rawSlot) else
+				// raw-(top.size-9)
+				: inv == view.getTopInventory() ? rawSlot
+						: rawSlot - (view.getTopInventory().getSize()
+								- (view.getType() == InventoryType.CRAFTING ? 5 : 9));
+		return new InventoryResolution(inv, actualSlot);
+	}
 }

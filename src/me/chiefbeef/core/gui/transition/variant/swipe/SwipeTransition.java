@@ -1,4 +1,4 @@
-package me.chiefbeef.core.gui.transition.swipe;
+package me.chiefbeef.core.gui.transition.variant.swipe;
 
 import me.chiefbeef.core.compatibility.CompatSound;
 import me.chiefbeef.core.gui.transition.GuiTransition;

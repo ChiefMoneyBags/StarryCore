@@ -1,4 +1,4 @@
-package me.chiefbeef.core.gui.transition.other;
+package me.chiefbeef.core.gui.transition.variant.other;
 
 import me.chiefbeef.core.gui.transition.GuiTransition;
 

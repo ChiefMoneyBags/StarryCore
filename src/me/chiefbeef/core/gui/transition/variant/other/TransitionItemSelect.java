@@ -1,4 +1,4 @@
-package me.chiefbeef.core.gui.transition.other;
+package me.chiefbeef.core.gui.transition.variant.other;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +12,12 @@ import me.chiefbeef.core.aesthetic.sound.interfacing.GuiSoundPack.GuiSound;
 import me.chiefbeef.core.gui.GuiSession;
 import me.chiefbeef.core.gui.GuiTheme;
 import me.chiefbeef.core.gui.GuiTheme.GuiElement;
-import me.chiefbeef.core.gui.abstraction.GuiCookie;
-import me.chiefbeef.core.gui.abstraction.Page;
-import me.chiefbeef.core.gui.cookies.SelectedItem;
-import me.chiefbeef.core.gui.cookies.GuiSessionCookies;
+import me.chiefbeef.core.gui.cookie.GuiCookie;
+import me.chiefbeef.core.gui.cookie.GuiSessionCookies;
+import me.chiefbeef.core.gui.cookie.variant.SelectedItem;
+import me.chiefbeef.core.gui.page.Page;
 import me.chiefbeef.core.gui.transition.GuiTransition;
-import me.chiefbeef.core.gui.transition.swipe.TransitionSwipeLeft;
+import me.chiefbeef.core.gui.transition.variant.swipe.TransitionSwipeLeft;
 import me.chiefbeef.core.utility.Console;
 import me.chiefbeef.core.utility.gui.Pages;
 

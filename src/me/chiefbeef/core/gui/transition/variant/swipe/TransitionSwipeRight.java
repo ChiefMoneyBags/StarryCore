@@ -1,9 +1,7 @@
-package me.chiefbeef.core.gui.transition.swipe;
+package me.chiefbeef.core.gui.transition.variant.swipe;
 
 import java.util.Iterator;
 
-import me.chiefbeef.core.gui.transition.GuiTransition;
-import me.chiefbeef.core.utility.assets.AssetBuildPack;
 import me.chiefbeef.core.utility.gui.Pages;
 
 public class TransitionSwipeRight extends SwipeTransition {
@@ -11,11 +9,11 @@ public class TransitionSwipeRight extends SwipeTransition {
 	@Override
 	public void nextFrame(int frame) {		
 		//move the inventory 1 space right, ignore right most column.
-		for (int slot = inv.getSize()-1; slot > 0; slot--) {
+		for (int slot = 0; slot < inv.getSize() - 1; slot++) {
 			if (Pages.isRightEdge(slot) || (!canAnimate(slot))) {
 				continue;
 			}
-			setSlot(slot+1, inv.getItem(slot));
+			setSlot(slot, inv.getItem(slot + 1));
 		}
 		
 		//move the next column of the animation into the inventory
@@ -24,10 +22,10 @@ public class TransitionSwipeRight extends SwipeTransition {
 		while (itLeft.hasNext()) {
 			int nextR = itRight.next();
 			int nextL = itLeft.next();
-			if (!canAnimate(nextR)) {
+			if (!canAnimate(nextL)) {
 				continue;
 			}
-			setSlot(nextL, to.getInventory().getItem(nextR-getCurrentFrame()));
+			setSlot(nextR, to.getInventory().getItem(nextL + getCurrentFrame()));
 		}
 	}
 

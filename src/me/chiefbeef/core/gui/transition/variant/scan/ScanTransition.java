@@ -1,4 +1,4 @@
-package me.chiefbeef.core.gui.transition.scan;
+package me.chiefbeef.core.gui.transition.variant.scan;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -21,7 +21,7 @@ public abstract class ScanTransition extends GuiTransition {
 	
 	@Override
 	public boolean hasNextFrame() {
-		return getCurrentFrame() <= 9;
+		return getCurrentFrame() <= 8;
 	}
 
 }

@@ -2,7 +2,6 @@ package me.chiefbeef.core.customitem.assets;
 
 import org.bukkit.inventory.ItemStack;
 
-import me.chiefbeef.core.customitem.CustomItem;
 import me.chiefbeef.core.utility.assets.AssetBuildPack;
 
 public class CustomItemBuildPack implements AssetBuildPack {

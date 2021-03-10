@@ -1,4 +1,4 @@
-package me.chiefbeef.core.gui.abstraction;
+package me.chiefbeef.core.gui.page.variant.dynamic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,8 @@ import org.bukkit.inventory.ItemStack;
 
 import me.chiefbeef.core.customitem.CustomItem;
 import me.chiefbeef.core.gui.GuiSession;
-import me.chiefbeef.core.gui.buttons.GuiButton;
+import me.chiefbeef.core.gui.button.GuiButton;
+import me.chiefbeef.core.gui.page.Page;
 import me.chiefbeef.core.utility.Console;
 import me.chiefbeef.core.utility.gui.Pages;
 

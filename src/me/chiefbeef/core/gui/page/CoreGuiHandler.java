@@ -1,4 +1,4 @@
-package me.chiefbeef.core.gui.abstraction;
+package me.chiefbeef.core.gui.page;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,8 @@ import me.chiefbeef.core.customitem.tracking.InventoryItemTracker;
 import me.chiefbeef.core.customitem.tracking.ItemTracker;
 import me.chiefbeef.core.gui.GuiSession;
 import me.chiefbeef.core.gui.GuiTheme.GuiElement;
-import me.chiefbeef.core.gui.buttons.GuiButton;
+import me.chiefbeef.core.gui.button.GuiButton;
+import me.chiefbeef.core.utility.Console;
 public abstract class CoreGuiHandler {
 
 	protected GuiSession session = null;
@@ -96,6 +97,7 @@ public abstract class CoreGuiHandler {
 	 * @param custom
 	 */
 	public void setSlot(int slot, CustomItem custom) {
+		Console.debug("setting slot to CustomItem", custom.getItem(), custom);
 		inv.setItem(slot, custom.getItem());
 		InventoryItemTracker iit = custom.getTracker(InventoryItemTracker.class);
 		if (!iit.isTracking(inv, slot)) {

@@ -3,8 +3,8 @@ package me.chiefbeef.core.utility.persistence.gui;
 import java.util.HashMap;
 import java.util.Map;
 
-import me.chiefbeef.core.gui.abstraction.DynamicPage;
-import me.chiefbeef.core.gui.abstraction.Page;
+import me.chiefbeef.core.gui.page.Page;
+import me.chiefbeef.core.gui.page.variant.dynamic.DynamicPage;
 import me.chiefbeef.core.utility.persistence.Data;
 
 public class PersistentSlotHolder extends Data {

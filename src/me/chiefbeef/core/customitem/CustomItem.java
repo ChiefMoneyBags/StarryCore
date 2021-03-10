@@ -122,6 +122,11 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 		if (!isCustom(item)) {
 			return null;
 		}
+		UUID id = getUUID(item);
+		if (itemCache.containsKey(id)) {
+			return itemCache.get(id);
+		}
+		
 		String label = getLabel(item);
 		CustomItem custom = getRegistry().getAssets(label).newInstance();
 		custom.applyBuildPack(new CustomItemBuildPack(item));
@@ -214,23 +219,26 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 		}
 		
 		this.item = cpack.getItemStack();
-		itemCache.put(id, this);
 	}
 	
 	
 	@Override
 	public CustomItem build() {
+		Console.debug("--| Building CustomItem...");
 		if (this.isBuilt()) {
+			Console.debug("--|> Item is already built!");
 			return this;
 		}
 		if (this.item == null) {
+			Console.debug("--| Item is null, setting type...");
 			this.item = new ItemStack(getMaterial().asMaterial());	
 		}
 		this.updateMeta();
-		this.id = isCustom(item) ? UUID.fromString(Meta.get(item, ITEM_ID_KEY)) : firstTimeSetup();
-		this.loadTrackers();
-		this.debugTrackers(true);
 		this.built = true;
+		this.id = isCustom(item) ? UUID.fromString(Meta.get(item, ITEM_ID_KEY)) : firstTimeSetup();
+		itemCache.put(id, this);
+		this.loadTrackers();
+		//this.debugTrackers(true);
 		return this;
 	}
 	
@@ -354,9 +362,13 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	
 	public void setHeadTexture(String url) {
 		if (!(this.item.getItemMeta() instanceof SkullMeta)) {
+			Console.debug("--| ItemMeta not an instance of SkullMeta...");
 			return;
 		}
+		Console.debug("--| Setting head texture for CustomItem...");
 		Meta.setHeadTexture((SkullMeta) this.item.getItemMeta(), url);
+		
+		
 	}
 
 	public void setType(Material mat) {
@@ -405,13 +417,13 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	public double getAmbientTempurature() {
 		int temp = -999;
 		if (this.getTracker(EntityItemTracker.class).holdsReference()) {
-			Console.debug("--| Component is on ground. Using entity location tempurature...");
+			//Console.debug("--| Component is on ground. Using entity location tempurature...");
 			return this.getTracker(EntityItemTracker.class).getEntities().get(0).getLocation().getBlock().getTemperature();
 		} else if (this.getTracker(CursorItemTracker.class).holdsReference()) {
-			Console.debug("--| Component is in player cursor. Using player location tempurature...");
+			//Console.debug("--| Component is in player cursor. Using player location tempurature...");
 			return this.getTracker(CursorItemTracker.class).getCursorPlayers().get(0).getLocation().getBlock().getTemperature();
 		} else if (this.getTracker(InventoryItemTracker.class).holdsReference()) {
-			Console.debug("--| Component is in an inventory FML. further checks needed...");
+			//Console.debug("--| Component is in an inventory FML. further checks needed...");
 			//InventoryItemTracker tracker = this.getTracker(InventoryItemTracker.class);
 			return 0;
 			// 1) check if module in player inv use player location

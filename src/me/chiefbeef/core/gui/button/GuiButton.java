@@ -1,9 +1,9 @@
-package me.chiefbeef.core.gui.buttons;
+package me.chiefbeef.core.gui.button;
 
 import org.bukkit.inventory.ItemStack;
 
 import me.chiefbeef.core.gui.GuiSession;
-import me.chiefbeef.core.gui.abstraction.Page;
+import me.chiefbeef.core.gui.page.Page;
 
 public abstract class GuiButton {
 

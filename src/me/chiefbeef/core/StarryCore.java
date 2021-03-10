@@ -1,10 +1,9 @@
 package me.chiefbeef.core;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.chiefbeef.core.command.handling.CommandManager;
 import me.chiefbeef.core.customitem.CustomItemEvents;
+import me.chiefbeef.core.gui.transition.GuiTransition;
 import me.chiefbeef.core.user.UserManager;
 
 public class StarryCore extends JavaPlugin {
@@ -22,6 +21,9 @@ public class StarryCore extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		StarryCore.starry = this;
+		
+		GuiTransition.registerInternalTypes(this);
+		
 		userManager = new UserManager(this);
 		customItem = new CustomItemEvents(this);
 		commands = new CommandManager(this);
@@ -42,7 +44,6 @@ public class StarryCore extends JavaPlugin {
 	}
 	
 	public CommandManager getCommandManager() {
-		
 		return commands;
 	}
 	

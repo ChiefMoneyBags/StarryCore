@@ -1,18 +1,18 @@
 package me.chiefbeef.core.gui;
 
-import java.lang.reflect.InvocationTargetException;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import me.chiefbeef.core.gui.abstraction.GuiCookie;
-import me.chiefbeef.core.gui.abstraction.Page;
-import me.chiefbeef.core.gui.abstraction.StaticPage;
-import me.chiefbeef.core.gui.cookies.GuiSessionCookies;
+
 import me.chiefbeef.core.gui.history.HistoryLevel;
+import me.chiefbeef.core.gui.page.Page;
+import me.chiefbeef.core.gui.page.variant.dynamic.StaticPage;
+import me.chiefbeef.core.gui.cookie.GuiCookie;
+import me.chiefbeef.core.gui.cookie.GuiSessionCookies;
 import me.chiefbeef.core.gui.history.GuiSessionHistory;
 import me.chiefbeef.core.gui.transition.GuiTransition;
 import me.chiefbeef.core.gui.transition.assets.GuiTransitionAssets;
-import me.chiefbeef.core.gui.transition.other.TransitionInstant;
+import me.chiefbeef.core.gui.transition.variant.other.TransitionInstant;
 import me.chiefbeef.core.user.UserCore;
 import me.chiefbeef.core.utility.Console;
 
@@ -46,7 +46,7 @@ public class GuiSession {
 		this.user = user;
 		this.history = new GuiSessionHistory(this);
 		this.cookies = new GuiSessionCookies(this);
-		//this.theme = new GuiTheme(user);
+		this.theme = new GuiTheme(this);
 	}
 	
 	/**
