@@ -24,7 +24,6 @@ public abstract class UserExtension implements AssetHolder<UserExtension> {
 		return registry;
 	}
 	
-	private boolean built;
 	private UserCore user;
 
 	/**
@@ -112,12 +111,11 @@ public abstract class UserExtension implements AssetHolder<UserExtension> {
 	
 	@Override
 	public UserExtension build() {
-		this.built = true;
 		return this;
 	}
 	
-	@Override
 	public boolean isBuilt() {
-		return built;
+		//TODO
+		return true;
 	}
 }

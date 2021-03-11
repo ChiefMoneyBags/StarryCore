@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import me.chiefbeef.core.gui.GuiSession;
 import me.chiefbeef.core.gui.page.Page;
 import me.chiefbeef.core.gui.transition.assets.GuiTransitionAssets;
+import me.chiefbeef.core.utility.Console;
 
 /**
  * GuiSessionHistory keeps track of the page depth of the current gui GuiSession.
@@ -58,6 +59,7 @@ public class GuiSessionHistory {
 	}
 	
 	public boolean hasPreviousPage() {
+		Console.debug("", "has previous page", history);
 		return history.size() > 0;
 	}
 	
@@ -66,7 +68,7 @@ public class GuiSessionHistory {
 	 * @return The page previous to the currently open {@link Page} in the chain. 
 	 */
 	public HistoryLevel getPreviousPage() {
-		return history.get(history.size()-2);
+		return history.get(history.size()-1);
 	}
 	
 	public void addPage(Page page, GuiTransitionAssets transition) {
@@ -111,11 +113,16 @@ public class GuiSessionHistory {
 	 * @param depth
 	 */
 	public void snip(int depth) {
-		if (depth >= history.size()) {
+		Console.debug("history snipping : " + depth);
+		Console.debug("size : " + history);
+		if (depth > history.size()) {
 			return;
 		}
+		Console.debug("iterating history");
 		for (Entry<Integer, HistoryLevel> entry: history.entrySet()) {
-			if (entry.getKey() > depth) {
+			Console.debug("depth: " + entry.getKey() + " page: " + entry.getValue().getPage());
+			if (entry.getKey() >= depth) {
+				Console.debug("removing historyPage");
 				history.remove(entry.getKey());
 			}
 		}
@@ -127,9 +134,11 @@ public class GuiSessionHistory {
 	 * @return The page at the depth.
 	 */
 	public HistoryLevel getPageAtDepth(int depth) {
+		Console.debug("history getting page at depth: " + depth);
 		if (depth > history.size()) {
 			return null;
 		}
+		Console.debug("page= " + history.get(depth).getPage());
 		return history.get(depth);
 	}
 }

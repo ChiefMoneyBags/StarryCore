@@ -113,9 +113,9 @@ public class UserManager {
 			}
 		}
 		
-		@EventHandler (priority = EventPriority.HIGHEST)
+		@EventHandler (priority = EventPriority.HIGH)
 		public void on(InventoryClickEvent e) {
-			Console.debug("---- GuiSession Click Event ----");
+			Console.debug("", "---- GuiSession Click Event ----");
 			if (!(e.getWhoClicked() instanceof Player)) {
 				return;
 			}
@@ -138,7 +138,7 @@ public class UserManager {
 			
 		}
 		
-		@EventHandler (priority = EventPriority.HIGHEST)
+		@EventHandler (priority = EventPriority.HIGH)
 		public void on(InventoryDragEvent e) {
 			if (!(e.getWhoClicked() instanceof Player)) {
 				return;

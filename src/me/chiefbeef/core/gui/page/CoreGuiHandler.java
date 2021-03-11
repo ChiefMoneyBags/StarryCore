@@ -97,6 +97,7 @@ public abstract class CoreGuiHandler {
 	 * @param custom
 	 */
 	public void setSlot(int slot, CustomItem custom) {
+		Console.debug("", "setSlot CoreGui", "custom " + custom, "item is null? " + custom.getItem() == null);
 		Console.debug("setting slot to CustomItem", custom.getItem(), custom);
 		inv.setItem(slot, custom.getItem());
 		InventoryItemTracker iit = custom.getTracker(InventoryItemTracker.class);
@@ -128,5 +129,30 @@ public abstract class CoreGuiHandler {
 		} else if (item instanceof GuiButton){
 			setSlot(slot,((GuiButton)item));
 		}
+	}
+	
+	/**
+	 * Re-apply an existing button to the gui.
+	 * @param button
+	 */
+	public void updateButton(GuiButton button) {
+		buttons.entrySet().stream().filter(entry -> entry.getValue().equals(button)).forEach(entry -> setSlot(entry.getKey(), entry.getValue().getItem()));
+	}
+	
+	/**
+	 * Invoked when the player clicks a button in the gui.
+	 * @param button The button being invoked.
+	 * @return True if you want the button click to be cancelled.
+	 */
+	public boolean onButtonClick(GuiButton button) {
+		return false;
+	}
+	
+	/**
+	 * 
+	 * @return true if the slot is a button.
+	 */
+	public boolean isButton(int slot) {
+		return buttons.containsKey(slot);
 	}
 }

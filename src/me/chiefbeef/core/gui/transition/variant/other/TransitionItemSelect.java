@@ -18,6 +18,7 @@ import me.chiefbeef.core.gui.cookie.variant.SelectedItem;
 import me.chiefbeef.core.gui.page.Page;
 import me.chiefbeef.core.gui.transition.GuiTransition;
 import me.chiefbeef.core.gui.transition.variant.swipe.TransitionSwipeLeft;
+import me.chiefbeef.core.gui.transition.variant.swipe.TransitionSwipeRight;
 import me.chiefbeef.core.utility.Console;
 import me.chiefbeef.core.utility.gui.Pages;
 
@@ -54,15 +55,17 @@ public class TransitionItemSelect extends GuiTransition {
 	@Override
 	public void onStart() {
 		GuiSessionCookies cookies = session.getCookies();
+		SelectedItem selectedItem = cookies.getDeepestInstanceOf(SelectedItem.class);
 		if (!cookies.hasCookie(SelectedItem.class)) {
 			Console.generateException("Missing data type in the GuiTransition (TransitionItemSelect)! This transition requires the data type: (SelectedItem)");
 			cancel();
 			return;
 		}
-		SelectedItem selectedItem = (SelectedItem) cookies.getDeepestInstanceOf(SelectedItem.class);
 		start = selectedItem.getOriginSlot();
 		selected = selectedItem.getItem();
 		theme = session.getTheme();
+		
+		Console.debug("", "start: " + start, "selected: " + selected);
 		
 		itemSlot = start;
 		for (int i: Pages.getTopEdge()) {
@@ -97,6 +100,7 @@ public class TransitionItemSelect extends GuiTransition {
 	 * out of the inventory
 	 */
 	private void stepA() {
+		Console.debug("step a");
 		for (Entry<Integer, ItemStack> entry: move.entrySet()) {
 			//If this is the first iteration play some sweet sound effects
 			if (ministep == 0) {
@@ -141,6 +145,7 @@ public class TransitionItemSelect extends GuiTransition {
 	 * In step B the selected item is moved to the center of the {@link Inventory} and subsequently to slot 5.
 	 */
 	private void stepB() {
+
 		if (Pages.isRightSide(itemSlot)) {
 			setSlot(itemSlot-1, selected);
 			setSlot(itemSlot, theme.get(from, itemSlot));
@@ -154,7 +159,7 @@ public class TransitionItemSelect extends GuiTransition {
 		} else {
 			if (Pages.isPresent(inv, itemSlot-9)) {
 				setSlot(itemSlot-9, selected);
-				setSlot(itemSlot, theme.get(from, itemSlot));
+				setSlot(itemSlot, theme.get(to, itemSlot));
 				itemSlot -= 9;
 			} else {
 				ministep = 1;
@@ -195,14 +200,18 @@ public class TransitionItemSelect extends GuiTransition {
 
 	@Override
 	public boolean hasNextFrame() {
-		// TODO Auto-generated method stub
-		return false;
+		return step <= 2 && ministep <= 5;
 	}
 
 	@Override
 	public String getLabel() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public Class<? extends GuiTransition> getInverse() {
+		return TransitionSwipeRight.class;
 	}
 	
 }

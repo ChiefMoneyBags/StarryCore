@@ -1,5 +1,7 @@
 package me.chiefbeef.core.gui.transition.variant.scan;
 
+import me.chiefbeef.core.gui.transition.GuiTransition;
+import me.chiefbeef.core.gui.transition.variant.swipe.TransitionSwipeRight;
 import me.chiefbeef.core.utility.gui.Pages;
 
 
@@ -24,4 +26,8 @@ public class TransitionScanLeft extends ScanTransition {
 		return "SCAN_LEFT";
 	}
 	
+	@Override
+	public Class<? extends GuiTransition> getInverse() {
+		return this.getClass();
+	}
 }

@@ -44,7 +44,7 @@ public class InventoryItemTracker extends ItemTracker {
 	 * @param slot
 	 */
 	public void addSlot(Inventory inv, Integer slot, boolean update) {
-		Console.debug("", "----InventoryItemTracker---", "--| Adding slot: " + slot);
+		//Console.debug("", "----InventoryItemTracker---", "--| Adding slot: " + slot);
 		List<Integer> list = slots.getOrDefault(inv, new ArrayList<>());
 		if (list.contains(slot)) {
 			return;
@@ -55,7 +55,7 @@ public class InventoryItemTracker extends ItemTracker {
 		list.add(slot);
 		slots.put(inv, list);
 		
-		Console.debug("--| New slots: " + list.toString());
+		//Console.debug("--| New slots: " + list.toString());
 		List<InventoryItemTracker> trackers = lookup.getOrDefault(inv, new ArrayList<>());
 		trackers.add(this);
 		lookup.put(inv, trackers);
@@ -69,7 +69,7 @@ public class InventoryItemTracker extends ItemTracker {
 	private void duplicateSlotCheck(Inventory inv, int slot, boolean update) {
 		for (InventoryItemTracker tracker: lookupByInventory(inv)) {
 			if (tracker.isTracking(inv, slot)) {
-				Console.debug("--|> Slot is already tracked in this inv!", "--| removing previous item tracker from this inv");
+				//Console.debug("--|> Slot is already tracked in this inv!", "--| removing previous item tracker from this inv");
 				tracker.removeSlot(inv, slot, update);
 			}
 		}
@@ -83,10 +83,10 @@ public class InventoryItemTracker extends ItemTracker {
 	 * @param slot
 	 */
 	public void removeSlot(Inventory inv, Integer slot, boolean update) {
-		Console.debug("", "----InventoryItemTracker---", "--| Removing slot: " + slot);
+		//Console.debug("", "----InventoryItemTracker---", "--| Removing slot: " + slot);
 		List<Integer> list = slots.getOrDefault(inv, new ArrayList<>());
 		list.remove(slot);
-		Console.debug("--| New slots: " + list.toString());
+		//Console.debug("--| New slots: " + list.toString());
 		if (list.size() < 1) {
 			removeInventory(inv, update);
 			return;
@@ -100,12 +100,12 @@ public class InventoryItemTracker extends ItemTracker {
 	 * @param inv The inventory to remove from the tracker.
 	 */
 	public void removeInventory(Inventory inv, boolean update) {
-		Console.debug("", "----InventoryItemTracker---", "--|> Removing tracker from inventory...");
+		//Console.debug("", "----InventoryItemTracker---", "--|> Removing tracker from inventory...");
 		slots.remove(inv);
 		
 		//Remove this tracker from the global lookup for this inv.
 		if (lookup.containsKey(inv)) {
-			Console.debug("--| Removing inventory from static lookup table...");
+			//Console.debug("--| Removing inventory from static lookup table...");
 			List<InventoryItemTracker> trackers = lookup.getOrDefault(inv, new ArrayList<>());
 			trackers.remove(this);
 			if (trackers.size() > 0) {
@@ -116,7 +116,7 @@ public class InventoryItemTracker extends ItemTracker {
 		}
 		
 		if (update && !holdsReference()) {
-			Console.debug("--|> This tracker no longer holds reference to the custom item!", "--|> Invoking tracker re-evaluation...");
+			//Console.debug("--|> This tracker no longer holds reference to the custom item!", "--|> Invoking tracker re-evaluation...");
 			getCustomItem().evaluateTrackers();
 		}
 	}

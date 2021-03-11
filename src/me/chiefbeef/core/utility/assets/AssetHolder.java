@@ -129,18 +129,18 @@ public interface AssetHolder<T> {
 	 * @param plugin The plugin instance that is responsible for the {@link Type}
 	 * @return
 	 */
-	public abstract TypeAssets<T> createAssets();
+	TypeAssets<T> createAssets();
 	
 	/**
 	 * @return The assets belonging to the {@link Type}.
 	 */
-	public abstract TypeAssets<T> getAssets();
+	TypeAssets<T> getAssets();
 
 	/**
 	 * 
 	 * @return true if this custom type should have its own config file.
 	 */
-	public abstract boolean hasConfig();
+	boolean hasConfig();
 	
 	/**
 	 * Due to the dynamic nature of AssetHolder instancing by the various API's, AssetHolders
@@ -157,21 +157,27 @@ public interface AssetHolder<T> {
 	 * requires a UserCore instance in its constructor to load player data, then CustomItem requires an ItemStack in its constructor
 	 * to load ItemMeta. the API cannot know these things and as such cannot obtain any {@link TypeAssets}.
 	 */
-	public abstract void applyBuildPack(AssetBuildPack pack);
+	void applyBuildPack(AssetBuildPack pack);
 	
 	
 	/**
 	 * Build a new instance of this {@link AssetHolder} without any initial parameters.
 	 * @throws UnsupportedOperationException if the {@link AssetHolder} type requires an {@link AssetBuildPack}
 	 */
-	public abstract T build();
+	T build();
 	
 	/**
 	 * Check if this AssetHolder has been built and is ready for use.
 	 * AssetHolders must be built before they can be used by invoking the methods {@link AssetHolder#build()} or {@link AssetHolder#build(AssetBuildPack)}.
 	 * @return true if the AssetHolder is built.
 	 */
-	public abstract boolean isBuilt();
+	boolean isBuilt();
+	
+	default void verifyObjectBuilt() {
+		if (!this.isBuilt()) {
+			throw new IllegalStateException("Types implementing AssetHolder MUST be built by invoking #build() before they can be used! ");
+		}
+	}
 	
 	/**
 	 * Get the unique label of this type following this pattern;
@@ -179,7 +185,7 @@ public interface AssetHolder<T> {
 	 * - All spaces are replaced with underscore (_)
 	 * @return The unique label of this type
 	 */
-	public abstract String getLabel();
+	String getLabel();
 	
 	/**
 	 * Get the chat friendly name of this Type. This can be used to identify an AssetHolder Type in
@@ -188,7 +194,6 @@ public interface AssetHolder<T> {
 	 * 
 	 * @return The chat friedly name of this type. spaces and color codes are welcome.
 	 */
-	public abstract String getFriendlyName();
-
+	String getFriendlyName();
 
 }

@@ -63,8 +63,8 @@ public abstract class GuiTransition extends CoreGuiHandler implements AssetHolde
 		setGuiSession(to.getGuiSession());
 		setInventory(from == null ? Bukkit.createInventory(null, 9)
 				: (from == to && (from instanceof DynamicPage) && ((DynamicPage) from).hasPreviousInventory())
-				? ((DynamicPage) from).getPreviousInventory()
-				: from.getInventory());
+				? Pages.copy(((DynamicPage) from).getPreviousInventory())
+				: Pages.copy(from.getInventory()));
 		this.size = to.getInventory().getSize();
 		this.selectedItem = session.getCookies().hasCookie(SelectedItem.class);
 		built = true;
@@ -77,6 +77,7 @@ public abstract class GuiTransition extends CoreGuiHandler implements AssetHolde
 	}
 
 	public final void start() {
+		this.verifyObjectBuilt();
 		taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(getGuiSession().getUser().getManager().getStarry(), this, 0, 1);
 		session.openInventory(inv);
 		this.onStart();
@@ -106,7 +107,7 @@ public abstract class GuiTransition extends CoreGuiHandler implements AssetHolde
 
 	@Override
 	public GuiTransitionAssets createAssets() {
-		return new GuiTransitionAssets(this.getClass(), this.getLabel());
+		return new GuiTransitionAssets(this.getClass(), this.getInverse(), this.getLabel());
 	}
 	
 	@Override
@@ -253,6 +254,8 @@ public abstract class GuiTransition extends CoreGuiHandler implements AssetHolde
 	 * @return true if this animation should be scheduled to invoke another frame.
 	 */
 	public abstract boolean hasNextFrame();
+	
+	public abstract Class<? extends GuiTransition> getInverse();
 
 	/**
 	 * I dont think transitions need a friendly name

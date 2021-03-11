@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import io.netty.util.internal.ThreadLocalRandom;
 import me.chiefbeef.core.compatibility.CompatSound;
 import me.chiefbeef.core.gui.transition.GuiTransition;
+import me.chiefbeef.core.gui.transition.variant.swipe.TransitionSwipeRight;
 
 public class TransitionGlitch extends GuiTransition {
 	
@@ -60,4 +61,8 @@ public class TransitionGlitch extends GuiTransition {
 		return "GLITCH";
 	}
 
+	@Override
+	public Class<? extends GuiTransition> getInverse() {
+		return this.getClass();
+	}
 }

@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import me.chiefbeef.core.gui.GuiSession;
 import me.chiefbeef.core.user.assets.UserExtensionRegistry;
+import me.chiefbeef.core.utility.Console;
 
 /**
  * The {@link UserCore} acts as a wrapper for the {@link Player} to extend its functionality
@@ -37,6 +38,7 @@ public class UserCore {
 		this.manager = manager;
 		this.p = p;
 		this.gui = new GuiSession(this);
+		loadExtensions();
 	}
 	
 	/**
@@ -126,7 +128,7 @@ public class UserCore {
 			UserExtension extension = UserExtension.getRegistry().getAssets(type).newInstance();
 			extension.setUser(this);
 			extension.build();
-			extensions.put(type, extension);	
+			extensions.put(type, extension);
 		}
 	}
 

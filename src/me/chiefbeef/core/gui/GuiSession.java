@@ -107,14 +107,18 @@ public class GuiSession {
 	 * @param transition
 	 */
 	public void setActivePage(final Page page, GuiTransition transition) {
-		Console.debug("----- Set active page -----");
+		Console.debug("", "----- Set active page -----");
 		if (isEnding()) {
 			Console.debug("--|> GuiSession is ending!");
 			return;
 		}
-		if (!goingBack && !(getPage() instanceof StaticPage)) {
+		/**
+		if (!goingBack && !(getPage() instanceof StaticPage) && (page != this.page)) {
+			Console.debug("--| Adding history page");
 			getHistory().addPage(getPage(), transition.getAssets());	
 		}
+		page.build();
+		*/
 		this.page = page;
 		Console.debug("--|> Opening page to...");
 		openInventory(page.getInventory());
@@ -177,13 +181,26 @@ public class GuiSession {
 	 * Invoke the actual gui transition.
 	 */
 	private void invokeTransition(Page to, GuiTransitionAssets assets) {
+		Console.debug("", "invoke transition");
 		if (isEnding()) {
 			return;
 		}
-		if (isTransitioning()) {
-			transition.cancel();
+		if (this.isTransitioning()) {
+			this.transition.cancel();
 		}
 		goingBack = false;
+		if (this.page == null) {
+			this.page = new StaticPage(this, 9) {};
+		}
+		
+		Console.debug(page);
+		
+		if (!goingBack && (!(this.page instanceof StaticPage)) && (to != this.page)) {
+			Console.debug("--| Adding history page");
+			this.getHistory().addPage(this.page, assets);	
+		}
+		to.build();
+		
 		transition = assets.newInstance().setPageFrom(page).setPageTo(to).build();
 		transition.start();
 	}
@@ -193,6 +210,7 @@ public class GuiSession {
 	 * @param historyPage
 	 */
 	private void invokeTransitionBack(HistoryLevel historyLevel) {
+		Console.debug("", "invoke transition back");
 		if (isEnding()) {
 			return;
 		}
@@ -200,7 +218,13 @@ public class GuiSession {
 			transition.cancel();
 		}
 		goingBack = true;
-		transition = historyLevel.getTransition().newInstance().setPageFrom(page).setPageTo(historyLevel.getPage()).build();
+		transition = GuiTransition.getRegistry().getAssets(historyLevel.getTransition().getInverse()).newInstance();
+		Console.debug("from = " + this.page, "to = " + historyLevel.getPage());
+		
+		transition.setPageFrom(this.page);
+		transition.setPageTo(historyLevel.getPage());
+		transition.setGuiSession(this);
+		transition.build();
 		transition.start();
 	}
 	
@@ -282,13 +306,11 @@ public class GuiSession {
 	 */
 	public void goBack(int number) {
 		int depth = history.getPageDepth();
-		if (depth == 1 || number == 0) {
+		if (depth == 0 || number == 0) {
 			return;
 		}
-		int pageNum = depth-number;
-		if (pageNum <= 0) {
-			pageNum = 1;
-		}
+		int pageNum = Math.max(depth - number, 1);
+		Console.debug("going back to " + pageNum);
 		goBackTo(pageNum);
 	}
 	
@@ -299,10 +321,13 @@ public class GuiSession {
 	 */
 	public void goBackTo(int pageNum) {
 		int depth = history.getPageDepth();
+		Console.debug("goBackTo : depth: " + depth + " pageNum : " + pageNum);
 		if (pageNum > depth) {
 			return;
 		}
+		Console.debug("page num is not greater than depth");
 		HistoryLevel historyPage = history.getPageAtDepth(pageNum);
+		Console.debug(historyPage.getPage());
 		history.snip(pageNum);
 		cookies.applyNewDepth(pageNum);
 		

@@ -41,9 +41,6 @@ import me.chiefbeef.core.utility.persistence.gui.PersistentSlotHolder;
  */
 public abstract class Page extends CoreGuiHandler {
 	
-	//Buttons in the gui mapped by slot number
-	private Map<Integer, GuiButton> buttons = new HashMap<>();
-	
 	//Slots in the gui registered as placeable, containing all objects types that may be placed in said slot.
 	private Map<Integer, List<Class<?>>> placeable = new HashMap<>();
 	
@@ -100,7 +97,9 @@ public abstract class Page extends CoreGuiHandler {
 		final int slot = e.getSlot();
 		
 		// buttons
+		Console.debug(slot);
 		if (isButton(slot)) {
+			Console.debug("is a button");
 			GuiButton button = buttons.get(slot);
 			if (!onButtonClick(button)) {
 				button.invoke(session);
@@ -145,32 +144,8 @@ public abstract class Page extends CoreGuiHandler {
 	 * invoked when the user clicks the back button.
 	 */
 	public void onBackButton() {
+		Console.debug("on back button");
 		session.goBack();
-	}
-	
-	/**
-	 * Re-apply an existing button to the gui.
-	 * @param button
-	 */
-	public void updateButton(GuiButton button) {
-		buttons.entrySet().stream().filter(entry -> entry.getValue().equals(button)).forEach(entry -> setSlot(entry.getKey(), entry.getValue().getItem()));
-	}
-	
-	/**
-	 * Invoked when the player clicks a button in the gui.
-	 * @param button The button being invoked.
-	 * @return True if you want the button click to be cancelled.
-	 */
-	public boolean onButtonClick(GuiButton button) {
-		return false;
-	}
-	
-	/**
-	 * 
-	 * @return true if the slot is a button.
-	 */
-	public boolean isButton(int slot) {
-		return buttons.containsKey(slot);
 	}
 	
 	

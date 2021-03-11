@@ -227,11 +227,11 @@ public class CustomItemEvents implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void on(InventoryCloseEvent e) {
-		Console.debug("", "---CustomItemInventoryClose---", "--| Preparing to remove all trackers from this inventory...");
+		//Console.debug("", "---CustomItemInventoryClose---", "--| Preparing to remove all trackers from this inventory...");
 		Inventory inv = e.getInventory();
 		
 		for (InventoryItemTracker tracker : InventoryItemTracker.lookupByInventory(inv)) {
-			Console.debug("--|> Found an inventory tracker, removing...");
+			//Console.debug("--|> Found an inventory tracker, removing...");
 			tracker.removeInventory(inv, true);
 		}
 	}
@@ -337,6 +337,9 @@ public class CustomItemEvents implements Listener {
 	*/
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void on(InventoryClickEvent e) {
+		if (e.isCancelled()) {
+			return;
+		} 
 		if (!(e.getWhoClicked() instanceof Player)) {
 			return;
 		}
@@ -369,7 +372,7 @@ public class CustomItemEvents implements Listener {
 			cancel = true;
 		}
 
-		if (!cancel) {
+		if (!cancel && e.getClick() != ClickType.MIDDLE) {
 			InventoryItemTracker iit;
 			CursorItemTracker cit;
 			EntityItemTracker eit;

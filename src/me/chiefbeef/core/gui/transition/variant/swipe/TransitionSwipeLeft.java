@@ -2,6 +2,7 @@ package me.chiefbeef.core.gui.transition.variant.swipe;
 
 import java.util.Iterator;
 
+import me.chiefbeef.core.gui.transition.GuiTransition;
 import me.chiefbeef.core.utility.Console;
 import me.chiefbeef.core.utility.gui.Pages;
 
@@ -33,5 +34,10 @@ public class TransitionSwipeLeft extends SwipeTransition {
 	@Override
 	public String getLabel() {
 		return "SWIPE_LEFT";
+	}
+
+	@Override
+	public Class<? extends GuiTransition> getInverse() {
+		return TransitionSwipeRight.class;
 	}
 }

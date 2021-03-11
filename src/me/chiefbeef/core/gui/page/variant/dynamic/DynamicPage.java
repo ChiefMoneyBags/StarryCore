@@ -73,11 +73,12 @@ public abstract class DynamicPage extends Page {
 	}
 	*/
 	
-	public <T extends Object> void setDynamicItems(List<T> t) {
+	public <T extends Object> void setDynamicItems(List<T> items) {
 		if (items == null) {
-			items = new ArrayList<>();
+			return;
 		}
-		this.items.addAll(t);
+		this.items.clear();
+		this.items.addAll(items);
 	}
 	
 	/**

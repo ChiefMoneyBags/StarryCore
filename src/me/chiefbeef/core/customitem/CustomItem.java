@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
@@ -200,13 +201,17 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	}
 	
 	/**
-	 * Construct the CustomItem using a build pack.
+	 * Construct the CustomItem using a build pack. CustomItemBuildPack 
 	 */
 	@Override
 	public void applyBuildPack(AssetBuildPack pack) {
+		Console.debug("--| Apply datapack");
+		
 		if (this.isBuilt()) {
+			Console.debug("cannot apply build pack. item is built!");
 			return;
 		}
+		
 		
 		if (!(pack instanceof CustomItemBuildPack)) {
 			throw new IllegalArgumentException("CustomItems require a CustomItemBuildPack!");
@@ -218,27 +223,34 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 			throw new IllegalArgumentException("The ItemStack passed was invalid!");
 		}
 		
-		this.item = cpack.getItemStack();
+		// we want a clone of the item passed in otherwise the other objects can hold on to our internal reference
+		// item and modify it without our knowledge causing errors and unintended behaviour.
+		this.item = cpack.getItemStack().clone();
 	}
 	
 	
 	@Override
 	public CustomItem build() {
 		Console.debug("--| Building CustomItem...");
+		
 		if (this.isBuilt()) {
 			Console.debug("--|> Item is already built!");
 			return this;
 		}
+		
 		if (this.item == null) {
 			Console.debug("--| Item is null, setting type...");
 			this.item = new ItemStack(getMaterial().asMaterial());	
 		}
-		this.updateMeta();
 		this.built = true;
+		this.updateMeta();
 		this.id = isCustom(item) ? UUID.fromString(Meta.get(item, ITEM_ID_KEY)) : firstTimeSetup();
 		itemCache.put(id, this);
 		this.loadTrackers();
-		//this.debugTrackers(true);
+		
+		Bukkit.getScheduler().runTaskTimer(getParentPlugin(), () -> {
+			Console.debug(item.getType());
+		}, 0, 20);
 		return this;
 	}
 	
@@ -281,9 +293,9 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 * @return A clone of the ItemStack representing this CustomItem.
 	 */
 	public ItemStack getItem() {
-		if (!isBuilt()) {
-			throw new IllegalStateException("CustomItem objects must be built before they can be used!");
-		}
+		Console.debug("------ getItem " + this.item.getType());
+		AssetHolder.super.verifyObjectBuilt();
+		Console.debug("----------------------------------- " + (item.clone() == item));
 		return item.clone();
 	}
 
@@ -291,9 +303,7 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 * @return The UUID of this CustomItem.
 	 */
 	public UUID getUniqueId() {
-		if (!isBuilt()) {
-			throw new IllegalStateException("CustomItem objects must be built before they can be used!");
-		}
+		this.verifyObjectBuilt();
 		return id;
 	}
 
@@ -372,10 +382,13 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	}
 
 	public void setType(Material mat) {
+		Console.debug("------ set type " + mat);
+		this.verifyObjectBuilt();
 		item.setType(mat);
 	}
 
 	public void setMeta(ItemMeta meta) {
+		this.verifyObjectBuilt();
 		item.setItemMeta(meta);
 	}
 	
@@ -384,7 +397,8 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 * CustomItems' representations.
 	 */
 	public void updateMeta() {
-		final ItemMeta meta = item.getItemMeta();
+		this.verifyObjectBuilt();
+		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(getDisplayName());
 		meta.setLore(getLore());
 		item.setItemMeta(meta);
@@ -394,7 +408,9 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 	 * Update the items material
 	 */
 	public void updateMaterial() {
-		getMaterial().applyMaterial(item);
+		Console.debug("------ updateMaterial " + getMaterial());
+		this.verifyObjectBuilt();
+		this.getMaterial().applyMaterial(item);
 	}
 	
 	/**
@@ -513,7 +529,10 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 		return pack;
 	}
 	
-	
+	@Override
+	public boolean isBuilt() {
+		return built;
+	}
 	
 	
 	
@@ -526,22 +545,26 @@ public abstract class CustomItem implements DataHolder, AssetHolder<CustomItem> 
 		debug = null;
 		if (enable) {
 			debug = new BukkitRunnable() {
-				private CompatMaterial[] mats = new CompatMaterial[] { CompatMaterial.BLACK_WOOL,
-						CompatMaterial.CYAN_WOOL, CompatMaterial.MAGENTA_WOOL, CompatMaterial.GREEN_WOOL,
-						CompatMaterial.ORANGE_WOOL, CompatMaterial.PINK_WOOL, CompatMaterial.RED_WOOL,
-						CompatMaterial.WHITE_WOOL };
-
+				private CompatMaterial[] rainbow = new CompatMaterial[] { 
+						CompatMaterial.WHITE_WOOL, CompatMaterial.LIGHT_GRAY_WOOL, CompatMaterial.GRAY_WOOL, CompatMaterial.BLACK_WOOL,
+						CompatMaterial.BROWN_WOOL, CompatMaterial.RED_WOOL, CompatMaterial.ORANGE_WOOL, CompatMaterial.YELLOW_WOOL,
+						CompatMaterial.LIME_WOOL, CompatMaterial.GREEN_WOOL, CompatMaterial.CYAN_WOOL, CompatMaterial.LIGHT_BLUE_WOOL,
+						CompatMaterial.BLUE_WOOL, CompatMaterial.PURPLE_WOOL, CompatMaterial.MAGENTA_WOOL, CompatMaterial.PINK_WOOL
+				};
+				
+				int index = 0;
+				
 				@Override
 				public void run() {
-					setType(mats[ThreadLocalRandom.current().nextInt(mats.length)].asMaterial());
+					setType(rainbow[index].asMaterial());
+					index++;
+					if (index >= rainbow.length - 1) {
+						index = 0;
+					}
 					updateItem();
 				}
-			}.runTaskTimer(getAssets().getParentPlugin(), 1, 2);
+			}.runTaskTimer(getAssets().getParentPlugin(), 1, 1);
 		}
 	}
 	
-	@Override
-	public boolean isBuilt() {
-		return built;
-	}
 }

@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import me.chiefbeef.core.gui.GuiSession;
 import me.chiefbeef.core.gui.page.Page;
 import me.chiefbeef.core.gui.transition.GuiTransition;
+import me.chiefbeef.core.utility.Console;
 
 public final class Link extends GuiButton {
 
@@ -27,6 +28,7 @@ public final class Link extends GuiButton {
 	
 	@Override
 	public void invoke(GuiSession session) {
+		Console.debug("link invoked");
 		Page to;
 		try { to = destination.getConstructor(GuiSession.class).newInstance(session); } catch (Exception e) {
 			e.printStackTrace();

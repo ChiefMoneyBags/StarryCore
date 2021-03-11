@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.chiefbeef.core.gui.GuiSession;
+import me.chiefbeef.core.utility.Console;
 
 /**
  * GuiSessionCookies allows data to be applied to a users GuiSession that may impact / affect Page construction
@@ -64,6 +65,8 @@ public class GuiSessionCookies {
 	public void addCookieCurrentDepth(GuiCookie cookie) {
 		DepthTree tree = cookies.getOrDefault(cookie.getClass(), new DepthTree(cookie.getClass()));
 		tree.addAtDepth(cookie, session.getHistory().getPageDepth());
+		cookies.putIfAbsent(cookie.getClass(), tree);
+		Console.debug("adding: " + cookie.getClass().getSimpleName() + " : at: " + session.getHistory().getPageDepth());
 	}
 	
 	/**
@@ -90,6 +93,7 @@ public class GuiSessionCookies {
 	 * @param depth the new depth
 	 */
 	public void applyNewDepth(int depth) {
+		Console.debug("apply new depth: " + depth);
 		for (DepthTree tree: cookies.values()) {
 			tree.snip(depth);
 			checkEmpty(tree);
@@ -205,6 +209,7 @@ public class GuiSessionCookies {
 		}
 		
 		public void snip(int depth) {
+			Console.debug("removing cookie if >= " + depth);
 			depthCookies.entrySet().removeIf(entry -> entry.getKey() >= depth);
 		}
 		
@@ -219,6 +224,7 @@ public class GuiSessionCookies {
 			for (Entry<Integer, GuiCookie> entry: depthCookies.entrySet()) {
 				if (entry.getKey() > deepest) {
 					found = entry.getValue();
+					deepest = entry.getKey();
 				}
 			}
 			return found;
